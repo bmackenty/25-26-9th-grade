@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+  <div class="border border-blue-400 bg-blue-50 rounded-lg p-6 mb-6">
+    <h2 class="text-2xl font-bold text-blue-800 mb-2">About This Project</h2>
+    <p class="text-blue-700 text-lg">
+      This is a minimal Flask starter app with SQLite and Tailwind CSS. It demonstrates basic CRUD operations, search functionality, and simple navigation for beginners.
+    </p>
+    <ul class="list-disc pl-6 mt-4 text-blue-700">
+      <li>Flask for backend and routing</li>
+      <li>SQLite for persistent storage</li>
+      <li>Tailwind CSS for styling</li>
+      <li>Jinja2 for templating</li>
+    </ul>
+  </div>
+{% endblock %}

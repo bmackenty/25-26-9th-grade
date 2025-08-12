@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Item List{% endblock %}
+
+{% block content %}
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold">Items</h1>
+    <a href="{{ url_for('create') }}"
+       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      + Add New Item
+    </a>
+  </div>
+
+  {% if items|length == 0 %}
+    <p class="text-gray-700">No items yet. Click "Add New Item" to create one.</p>
+  {% else %}
+    <ul class="space-y-3">
+      {% for item in items %}
+        <li class="bg-white p-4 rounded shadow flex justify-between items-start">
+          <div>
+            <h2 class="font-semibold">
+              <a href="{{ url_for('view', item_id=item['id']) }}" class="font-bold text-blue-700 hover:underline">
+            {{ item['name'] }}</a></h2>
+            <p class="text-gray-700">{{ item["description"] }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="{{ url_for('edit', item_id=item['id']) }}"
+               class="text-blue-600 hover:underline">Edit</a>
+
+            <!-- Delete uses POST to avoid accidental URL deletes -->
+            <form action="{{ url_for('delete', item_id=item['id']) }}" method="post">
+              <button type="submit" class="text-red-600 hover:underline"
+                      onclick="return confirm('Delete this item?');">
+                Delete
+              </button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

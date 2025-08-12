@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+  <div class="border border-yellow-400 bg-yellow-50 rounded-lg p-6 mb-6">
+    <h2 class="text-2xl font-bold text-yellow-800 mb-2">Admin Dashboard</h2>
+    <p class="text-yellow-700 text-lg mb-6">
+      Welcome, admin! Here you can manage users, view messages, and perform administrative tasks.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Contact Messages Section -->
+      <section>
+        <h3 class="text-xl font-semibold text-yellow-800 mb-2">Contact Messages</h3>
+        <div class="bg-white border border-yellow-200 rounded-lg p-4">
+          {% if messages %}
+            <ul class="divide-y divide-yellow-200">
+              {% for msg in messages %}
+                <li class="py-2">
+                  <div class="font-bold text-yellow-700">{{ msg['name'] }} ({{ msg['email'] }})</div>
+                  <div class="text-yellow-800">{{ msg['message'] }}</div>
+                  <div class="text-xs text-yellow-600">{{ msg['created_at'] }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-yellow-600">No contact messages found.</p>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- User Management Section -->
+      <section>
+        <h3 class="text-xl font-semibold text-yellow-800 mb-2">User Management</h3>
+        <div class="bg-white border border-yellow-200 rounded-lg p-4">
+          {% if users %}
+            <table class="min-w-full bg-white border border-yellow-300 rounded mb-4">
+              <thead>
+                <tr>
+                  <th class="py-2 px-4 border-b">Username</th>
+                  <th class="py-2 px-4 border-b">Status</th>
+                  <th class="py-2 px-4 border-b">Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                  <tr>
+                    <td class="py-2 px-4 border-b">{{ user['username'] }}</td>
+                    <td class="py-2 px-4 border-b">{{ user['status'] }}</td>
+                    <td class="py-2 px-4 border-b">
+                      <a href="{{ url_for('edit_user', user_id=user['id']) }}" class="text-blue-600 hover:underline">Edit</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="text-yellow-600">No users found.</p>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}
