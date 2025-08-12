@@ -22,22 +22,25 @@
     </div>
 
         <!-- Search functionality -->
-    <form action="/search" method="GET" class="mb-6">
-      <div class="flex items-center">
-        <input
-          type="text"
-          name="q"
-          class="w-full px-4 py-2 border border-blue-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Search..."
-        />
-        <button
-          type="submit"
-          class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-lg hover:bg-blue-700"
-        >
-          Search
-        </button>
-      </div>
-    </form>
+    {% if request.endpoint not in ['about', 'login', 'logout','register', 'contact', 'admin_dashboard'] %}
+      <!-- Search functionality -->
+      <form action="/search" method="GET" class="mb-6">
+        <div class="flex items-center">
+          <input
+            type="text"
+            name="q"
+            class="w-full px-4 py-2 border border-blue-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Search..."
+          />
+          <button
+            type="submit"
+            class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-lg hover:bg-blue-700"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    {% endif %}
 
     {% block content %}
     
