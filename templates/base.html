@@ -1,15 +1,91 @@
+{# JINJA TEMPLATE ENGINE OVERVIEW FOR STUDENTS
+================================================
+
+This is the BASE TEMPLATE that all other pages inherit from.
+It demonstrates several key Jinja concepts:
+
+1. TEMPLATE INHERITANCE:
+   - Other templates extend this one using {% extends "base.html" %}
+   - They can override blocks like title and content
+   - This keeps navigation, styling, and common elements consistent
+
+2. BLOCKS:
+   - {% block title %} - Child templates can override this
+   - {% block content %} - Child templates put their main content here
+   - Think of blocks as "placeholders" that child templates fill in
+
+3. INCLUDES:
+   - {% include 'navbar.html' %} - Inserts another template file
+   - Useful for reusable components like navigation menus
+
+4. CONDITIONALS:
+   - {% if condition %}...{% endif %} - Show/hide elements based on conditions
+   - request.endpoint gives us the current page name
+
+5. VARIABLES:
+   - {{ variable }} - Display values passed from Flask
+   - request.endpoint is a built-in Flask variable
+
+This template creates the overall page structure, and child templates
+fill in the specific content for each page.
+#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  {# JINJA BLOCK EXAMPLE #1: TITLE BLOCK
+       =====================================
+       This title block can be overridden by child templates.
+       - If a child template defines {% block title %}, it will use that title
+       - If no child template defines a title, it defaults to "Flask App"
+       - This allows each page to have a unique title in the browser tab
+       
+       SYNTAX: {% block title %}Default Title{% endblock %}
+       USAGE: Child templates can override with: {% block title %}My Page{% endblock %} #}
   <title>{% block title %}Flask App{% endblock %}</title>
+  
+  {# EXTERNAL LIBRARIES (Not Jinja-related)
+       =======================================
+       Tailwind CSS: For styling (utility-first CSS framework)
+       Alpine.js: For simple JavaScript interactivity #}
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
+  {# JINJA INCLUDE EXAMPLE
+       =====================
+       This includes the navbar.html template, which will be inserted here.
+       Think of it like copying and pasting the navbar code into this spot.
+       
+       BENEFITS:
+       - Reusable navigation across all pages
+       - Easy to update navigation in one place
+       - Keeps code DRY (Don't Repeat Yourself)
+       
+       SYNTAX: {% include 'template_name.html' %}
+       LOCATION: The navbar.html file must be in the templates/ folder #}
   {% include 'navbar.html' %}
+  
+  {# MAIN CONTENT CONTAINER
+       =======================
+       This div wraps all the main content of the page.
+       - max-w-3xl: Maximum width of 48rem (768px)
+       - mx-auto: Center the content horizontally
+       - p-6: Add padding of 1.5rem (24px) on all sides #}
   <div class="max-w-3xl mx-auto p-6">
+    {# WELCOME MESSAGE BOX
+         ====================
+         This is a static welcome message that appears on every page.
+         It's not controlled by Jinja - it's just regular HTML with Tailwind CSS styling.
+         
+         TAILWIND CLASSES EXPLAINED:
+         - border border-blue-400: Blue border around the box
+         - bg-blue-50: Very light blue background
+         - rounded-lg: Rounded corners
+         - p-4: Padding inside the box
+         - mb-6: Margin bottom (space below the box) #}
     <div class="border border-blue-400 bg-blue-50 rounded-lg p-4 mb-6">
       <h1 class="text-2xl font-bold text-blue-800 mb-2">Welcome to Flask Starter!</h1>
       <p class="text-blue-700 text-lg">
@@ -17,15 +93,72 @@
       </p>
     </div>
 
+    {# JINJA CONDITIONAL EXAMPLE: SEARCH FORM
+         ======================================
+         This shows the search form only on certain pages.
+         request.endpoint gives us the current route name (the function name in app.py).
+         
+         LOGIC EXPLANATION:
+         - If the current page is NOT in the excluded list, show the search form
+         - If the current page IS in the excluded list, hide the search form
+         
+         WHY EXCLUDE THESE PAGES?
+         - about: Static information page (no items to search)
+         - login/register: Authentication pages (no items to search)
+         - logout: Confirmation page (no items to search)
+         - contact: Contact form (no items to search)
+         - admin_dashboard: Admin-only page (different search needs)
+         
+         SYNTAX: {% if condition %}...{% endif %}
+         VARIABLE: request.endpoint (built-in Flask variable)
+         OPERATOR: not in (check if value is NOT in the list) #}
     {% if request.endpoint not in ['about', 'login', 'logout','register', 'contact', 'admin_dashboard'] %}
+      {# SEARCH FORM HTML
+           =================
+           This is a regular HTML form that submits to the /search route.
+           The form uses GET method, which means search terms appear in the URL.
+           
+           FORM ATTRIBUTES:
+           - action="/search": Submit to the search route
+           - method="GET": Use GET method (search terms in URL)
+           - name="q": The search query parameter name #}
       <form action="/search" method="GET" class="mb-6">
         <div class="flex items-center">
+          {# SEARCH INPUT FIELD
+               ===================
+               This input field captures what the user wants to search for.
+               
+               INPUT ATTRIBUTES:
+               - type="text": Text input field
+               - name="q": Parameter name sent to Flask (request.args.get("q"))
+               - placeholder="Search...": Hint text when field is empty
+               
+               TAILWIND CLASSES:
+               - w-full: Full width of parent container
+               - px-4 py-2: Horizontal and vertical padding
+               - border border-blue-300: Blue border
+               - rounded-l-lg: Rounded left corners (for search button connection)
+               - focus:outline-none focus:ring-2 focus:ring-blue-400: Blue ring when focused #}
           <input
             type="text"
             name="q"
             class="w-full px-4 py-2 border border-blue-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Search..."
           />
+          {# SEARCH BUTTON
+               ==============
+               This button submits the search form.
+               
+               BUTTON ATTRIBUTES:
+               - type="submit": Submit the form when clicked
+               
+               TAILWIND CLASSES:
+               - px-4 py-2: Padding for button size
+               - bg-blue-600: Blue background
+               - text-white: White text
+               - font-semibold: Semi-bold font weight
+               - rounded-r-lg: Rounded right corners (connects to input field)
+               - hover:bg-blue-700: Darker blue on hover #}
           <button
             type="submit"
             class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-lg hover:bg-blue-700"
@@ -36,6 +169,25 @@
       </form>
     {% endif %}
 
+    {# JINJA BLOCK EXAMPLE #2: CONTENT BLOCK
+         ======================================
+         This is where child templates will insert their content.
+         Each page (index.html, create.html, edit.html, etc.) will define what goes in this block.
+         
+         HOW IT WORKS:
+         1. Child template extends base.html: {% extends "base.html" %}
+         2. Child template defines content: {% block content %}...{% endblock %}
+         3. Jinja replaces this block with the child's content
+         
+         EXAMPLE:
+         - index.html extends base.html and puts a list of items here
+         - create.html extends base.html and puts a form here
+         - edit.html extends base.html and puts a pre-filled form here
+         
+         SYNTAX: {% block content %}{% endblock %}
+         LOCATION: This is the main content area that changes from page to page
+         
+         THINK OF IT AS: A "placeholder" that child templates fill in #}
     {% block content %}
     {% endblock %}
   </div>
