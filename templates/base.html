@@ -1,56 +1,15 @@
-<!-- JINJA TEMPLATE ENGINE OVERVIEW FOR STUDENTS
-================================================
-
-This is the BASE TEMPLATE that all other pages inherit from.
-It demonstrates several key Jinja concepts:
-
-1. TEMPLATE INHERITANCE:
-   - Other templates extend this one using {% extends "base.html" %}
-   - They can override blocks like title and content
-   - This keeps navigation, styling, and common elements consistent
-
-2. BLOCKS:
-   - {% block title %} - Child templates can override this
-   - {% block content %} - Child templates put their main content here
-   - Think of blocks as "placeholders" that child templates fill in
-
-3. INCLUDES:
-   - {% include 'navbar.html' %} - Inserts another template file
-   - Useful for reusable components like navigation menus
-
-4. CONDITIONALS:
-   - {% if condition %}...{% endif %} - Show/hide elements based on conditions
-   - request.endpoint gives us the current page name
-
-5. VARIABLES:
-   - {{ variable }} - Display values passed from Flask
-   - request.endpoint is a built-in Flask variable
-
-This template creates the overall page structure, and child templates
-fill in the specific content for each page.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
-       This title block can be overridden by child templates.
-       If a child template doesn't define a title, it defaults to "Flask App" -->
   <title>{% block title %}Flask App{% endblock %}</title>
-
-  <!-- Tailwind CSS (no build step needed) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js for simple interactivity -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
-  <!-- JINJA INCLUDE EXAMPLE:
-       This includes the navbar.html template, which will be inserted here.
-       Think of it like copying and pasting the navbar code into this spot. -->
   {% include 'navbar.html' %}
   <div class="max-w-3xl mx-auto p-6">
-    <!-- Introduction box -->
     <div class="border border-blue-400 bg-blue-50 rounded-lg p-4 mb-6">
       <h1 class="text-2xl font-bold text-blue-800 mb-2">Welcome to Flask Starter!</h1>
       <p class="text-blue-700 text-lg">
@@ -58,12 +17,7 @@ fill in the specific content for each page.
       </p>
     </div>
 
-    <!-- JINJA CONDITIONAL EXAMPLE:
-         This shows the search form only on certain pages.
-         request.endpoint gives us the current route name.
-         The search form won't appear on login, about, etc. pages. -->
     {% if request.endpoint not in ['about', 'login', 'logout','register', 'contact', 'admin_dashboard'] %}
-      <!-- Search functionality -->
       <form action="/search" method="GET" class="mb-6">
         <div class="flex items-center">
           <input
@@ -82,13 +36,8 @@ fill in the specific content for each page.
       </form>
     {% endif %}
 
-    <!-- JINJA BLOCK EXAMPLE:
-         This is where child templates will insert their content.
-         Each page (index.html, create.html, etc.) will define what goes in this block.
-         This is the main content area that changes from page to page. -->
     {% block content %}
-    
     {% endblock %}
   </div>
 </body>
-</html>
+</html> 
