@@ -6,6 +6,36 @@ Why this file?
 - Keeps everything in one place to reduce cognitive load for new programmers.
 - Auto-creates the SQLite database & table if they don't exist.
 
+JINJA TEMPLATING CONCEPTS FOR STUDENTS:
+========================================
+
+1. WHAT IS JINJA?
+   - Jinja2 is a template engine that lets us mix HTML with Python-like code
+   - It allows us to create dynamic web pages that change based on data
+
+2. HOW IT WORKS:
+   - Flask (Python) prepares data and passes it to templates
+   - Templates use special syntax to display that data
+   - The result is HTML that gets sent to the browser
+
+3. KEY JINJA SYNTAX:
+   - {{ variable }} - Display a variable's value
+   - {% if condition %}...{% endif %} - Conditional statements
+   - {% for item in list %}...{% endfor %} - Loops
+   - {% extends "base.html" %} - Template inheritance
+   - {% block name %}...{% endblock %} - Define blocks for inheritance
+
+4. DATA FLOW EXAMPLE:
+   - Python: items = [{"name": "Apple", "description": "Red fruit"}]
+   - Template: {% for item in items %}{{ item['name'] }}{% endfor %}
+   - Result: Apple
+
+5. WHY USE TEMPLATES?
+   - Separate logic (Python) from presentation (HTML)
+   - Reuse common elements (navigation, footer)
+   - Make pages dynamic based on data
+   - Keep code organized and maintainable
+
 How to run:
     python3 -m venv venv
     source venv/bin/activate
@@ -41,6 +71,11 @@ def index():
     HOME PAGE (READ): Show a list of all items in the database.
     - SQL: SELECT * FROM items
     - Template: templates/index.html
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass 'items' variable to the template: render_template("index.html", items=items)
+    - In the template, we can access this as {{ items }} or loop through it with {% for item in items %}
+    - Each 'item' is a database row that we can access like item['name'], item['description']
     """
     conn = get_db_connection()
     items = conn.execute("SELECT * FROM items").fetchall()
@@ -53,6 +88,11 @@ def create():
     CREATE: Show a form (GET) and insert a new item (POST).
     - On GET: render the form
     - On POST: INSERT into the database and redirect to "/"
+    
+    JINJA TEMPLATING EXAMPLE:
+    - GET request: render_template("create.html") - no variables passed, template shows empty form
+    - POST request: After saving, redirect to index page (no template rendering needed)
+    - The create.html template will have form fields that submit to this same route
     """
     if request.method == "POST":
         # Get data the user typed in the form fields named "name" and "description"
@@ -84,6 +124,11 @@ def edit(item_id):
     UPDATE: Show a form pre-filled with the existing item, then save changes.
     - GET: SELECT the item and show the form
     - POST: UPDATE the item, then redirect to "/"
+    
+    JINJA TEMPLATING EXAMPLE:
+    - GET request: render_template("edit.html", item=item) - passes 'item' variable to template
+    - In edit.html, we can pre-fill form fields like: value="{{ item['name'] }}"
+    - This allows users to see and modify existing data instead of starting with empty fields
     """
     conn = get_db_connection()
     item = conn.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
@@ -128,6 +173,12 @@ def search():
     SEARCH: Find items whose name or description contains the query string.
     - SQL: SELECT * FROM items WHERE name LIKE ? OR description LIKE ?
     - Template: templates/search_results.html
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass TWO variables: query (the search term) and results (the found items)
+    - render_template("search_results.html", query=query, results=results)
+    - In the template, we can show the search term: "Results for: {{ query }}"
+    - And loop through results: {% for item in results %} to display each found item
     """
     query = request.args.get("q", "").strip()
     results = []
@@ -147,6 +198,11 @@ def view(item_id):
     VIEW: Show a single item's details.
     - SQL: SELECT * FROM items WHERE id = ?
     - Template: templates/view.html
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass a single 'item' variable: render_template("view.html", item=item)
+    - In the template, we can access item properties: {{ item['name'] }}, {{ item['description'] }}
+    - This is useful for showing detailed information about one specific record
     """
     conn = get_db_connection()
     item = conn.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
@@ -188,6 +244,11 @@ def contact():
     CONTACT PAGE: Show a contact form and handle submissions.
     - Template: templates/contact.html
     - Saves messages to the contact_messages table.
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass a 'success' variable: render_template("contact.html", success=success)
+    - In the template, we can show success messages: {% if success %}Thank you!{% endif %}
+    - This allows us to give user feedback after form submission
     """
     success = False
     if request.method == "POST":
@@ -229,6 +290,14 @@ def register():
     REGISTER: Show registration form and handle user registration.
     - Template: templates/register.html
     - Saves new user to the users table.
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass TWO variables: success and error
+    - render_template("register.html", success=success, error=error)
+    - In the template, we can show different messages:
+    - {% if success %}Registration successful!{% endif %}
+    - {% if error %}{{ error }}{% endif %}
+    - This pattern allows us to handle both success and error cases
     """
     success = False
     error = None
@@ -258,6 +327,11 @@ def login():
     LOGIN: Show login form and handle user authentication.
     - Template: templates/login.html
     - Uses session to remember logged-in user.
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass an 'error' variable: render_template("login.html", error=error)
+    - In the template, we can show error messages: {% if error %}{{ error }}{% endif %}
+    - If no error, the template shows the login form; if error, it shows the form + error message
     """
     error = None
     if request.method == "POST":
@@ -292,6 +366,14 @@ def admin_dashboard():
     """
     ADMIN DASHBOARD: Only accessible to admin users.
     Shows contact messages and user management.
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass TWO variables: messages and users
+    - render_template("admin_dashboard.html", messages=messages, users=users)
+    - In the template, we can loop through both:
+    - {% for message in messages %} to show contact messages
+    - {% for user in users %} to show user list
+    - This demonstrates passing multiple data sets to one template
     """
     if not session.get("user_id") or session.get("status") != "admin":
         return redirect(url_for("login"))
@@ -305,6 +387,15 @@ def admin_dashboard():
 def edit_user(user_id):
     """
     EDIT USER: Admin can change a user's status and password.
+    
+    JINJA TEMPLATING EXAMPLE:
+    - We pass THREE variables: user, error, and success
+    - render_template("edit_user.html", user=user, error=error, success=success)
+    - In the template, we can:
+    - Show user info: {{ user['username'] }}, {{ user['status'] }}
+    - Display errors: {% if error %}{{ error }}{% endif %}
+    - Show success: {% if success %}User updated!{% endif %}
+    - This shows how to handle multiple types of feedback in one template
     """
     if not session.get("user_id") or session.get("status") != "admin":
         return redirect(url_for("login"))

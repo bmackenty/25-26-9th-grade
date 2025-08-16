@@ -1,10 +1,16 @@
+<!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
+     This template extends base.html and overrides the title block. -->
 {% extends "base.html" %}
 {% block title %}Create Item{% endblock %}
 
 {% block content %}
   <h1 class="text-2xl font-bold mb-4">Create New Item</h1>
 
-  <!-- Basic HTML form that POSTs back to the same URL -->
+  <!-- JINJA FORM ACTION EXAMPLE:
+       This form will submit to the 'create' route when the user clicks Save.
+       url_for('create') generates the correct URL for the create function in app.py.
+       The form uses POST method, which means the data goes in the request body,
+       not in the URL (more secure for form submissions). -->
   <form action="{{ url_for('create') }}" method="post" class="space-y-4 bg-white p-4 rounded shadow">
     <div>
       <label class="block font-medium mb-1">Name</label>
@@ -21,6 +27,10 @@
       <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
         Save
       </button>
+      <!-- JINJA URL GENERATION EXAMPLE:
+           The Cancel link uses url_for('index') to go back to the home page.
+           This ensures the link always points to the correct route, even if we
+           change our URL structure later. -->
       <a href="{{ url_for('index') }}" class="px-4 py-2 rounded border">Cancel</a>
     </div>
   </form>

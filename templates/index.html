@@ -1,6 +1,16 @@
+<!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
+     This template extends base.html, meaning it gets all the HTML structure
+     from base.html and only defines what goes in the content block. -->
 {% extends "base.html" %}
+
+<!-- JINJA BLOCK OVERRIDE EXAMPLE:
+     This overrides the title block from base.html.
+     The page title will now be "Item List" instead of "Flask App". -->
 {% block title %}Item List{% endblock %}
 
+<!-- JINJA CONTENT BLOCK EXAMPLE:
+     This defines what goes in the content block of base.html.
+     Everything between these tags will be inserted into the base template. -->
 {% block content %}
   <div class="flex items-center justify-between mb-4">
     <h1 class="text-2xl font-bold">Items</h1>
@@ -10,23 +20,46 @@
     </a>
   </div>
 
+  <!-- JINJA CONDITIONAL EXAMPLE:
+       This checks if there are any items to display.
+       items|length == 0 means "if the items list has 0 elements"
+       The | character is a Jinja filter - it modifies the data before comparison -->
   {% if items|length == 0 %}
     <p class="text-gray-700">No items yet. Click "Add New Item" to create one.</p>
   {% else %}
+    <!-- JINJA LOOP EXAMPLE:
+         This loops through each item in the items list.
+         For each item, it creates a list element with the item's data.
+         The loop variable 'item' contains one database row at a time. -->
     <ul class="space-y-3">
       {% for item in items %}
         <li class="bg-white p-4 rounded shadow flex justify-between items-start">
           <div>
             <h2 class="font-semibold">
+              <!-- JINJA URL GENERATION EXAMPLE:
+                   url_for('view', item_id=item['id']) creates the URL for viewing this item.
+                   It's like writing /5/ where 5 is the item's ID.
+                   This keeps URLs consistent even if we change our route names later. -->
               <a href="{{ url_for('view', item_id=item['id']) }}" class="font-bold text-blue-700 hover:underline">
-            {{ item['name'] }}</a></h2>
+                <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+                     {{ item['name'] }} displays the value of the 'name' field from this item.
+                     The item is a database row, so item['name'] gets the name column value. -->
+                {{ item['name'] }}</a></h2>
+            <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+                 {{ item["description"] }} displays the description field.
+                 Note: we can use either single or double quotes for dictionary keys. -->
             <p class="text-gray-700">{{ item["description"] }}</p>
           </div>
           <div class="flex items-center gap-3">
+            <!-- JINJA URL GENERATION EXAMPLE:
+                 url_for('edit', item_id=item['id']) creates the edit URL for this item. -->
             <a href="{{ url_for('edit', item_id=item['id']) }}"
                class="text-blue-600 hover:underline">Edit</a>
 
             <!-- Delete uses POST to avoid accidental URL deletes -->
+            <!-- JINJA URL GENERATION EXAMPLE:
+                 url_for('delete', item_id=item['id']) creates the delete URL.
+                 This form will submit to the delete route for this specific item. -->
             <form action="{{ url_for('delete', item_id=item['id']) }}" method="post">
               <button type="submit" class="text-red-600 hover:underline"
                       onclick="return confirm('Delete this item?');">

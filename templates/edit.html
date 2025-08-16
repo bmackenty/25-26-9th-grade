@@ -1,18 +1,31 @@
+<!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
+     This template extends base.html and overrides the title block. -->
 {% extends "base.html" %}
 {% block title %}Edit Item{% endblock %}
 
 {% block content %}
   <h1 class="text-2xl font-bold mb-4">Edit Item</h1>
 
-  <!-- The form is pre-filled using the "item" passed from app.py -->
+  <!-- JINJA FORM ACTION WITH PARAMETERS EXAMPLE:
+       This form submits to the edit route with the specific item_id.
+       url_for('edit', item_id=item['id']) creates a URL like /5/edit/ where 5 is the item's ID.
+       The item variable was passed from app.py: render_template("edit.html", item=item) -->
   <form action="{{ url_for('edit', item_id=item['id']) }}" method="post" class="space-y-4 bg-white p-4 rounded shadow">
     <div>
       <label class="block font-medium mb-1">Name</label>
+      <!-- JINJA PRE-FILLED FORM EXAMPLE:
+           value="{{ item['name'] }}" puts the current item name in the input field.
+           This allows users to see and modify the existing data instead of starting with empty fields.
+           The item variable contains the database row passed from the edit() function in app.py. -->
       <input type="text" name="name" value="{{ item['name'] }}" required
              class="w-full border rounded px-3 py-2"/>
     </div>
     <div>
       <label class="block font-medium mb-1">Description</label>
+      <!-- JINJA PRE-FILLED TEXTAREA EXAMPLE:
+           {{ item['description'] }} puts the current description in the textarea.
+           Unlike input fields, textareas put the content between the opening and closing tags.
+           This shows how different HTML elements handle Jinja variables differently. -->
       <textarea name="description" rows="4" required
                 class="w-full border rounded px-3 py-2">{{ item['description'] }}</textarea>
     </div>

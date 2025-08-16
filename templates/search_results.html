@@ -1,20 +1,46 @@
+<!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
+     This template extends base.html and overrides the title block. -->
 {% extends "base.html" %}
 {% block title %}Search Results{% endblock %}
 
 {% block content %}
+  <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+       {{ query }} displays the search term that the user typed.
+       This variable was passed from app.py: render_template("search_results.html", query=query, results=results)
+       The query shows users what they searched for. -->
   <h2 class="text-xl font-semibold text-blue-800 mb-4">Search Results for "{{ query }}"</h2>
+  
+  <!-- JINJA CONDITIONAL WITH MULTIPLE CHECKS EXAMPLE:
+       This checks if results exist AND if the results list has more than 0 items.
+       The 'and' keyword combines multiple conditions.
+       This prevents errors if results is None or an empty list. -->
   {% if results and results|length > 0 %}
     <ul class="list-disc pl-6">
+      <!-- JINJA LOOP EXAMPLE:
+           This loops through each search result item.
+           The results variable contains the list of items that matched the search.
+           Each item is a database row with 'id', 'name', and 'description' fields. -->
       {% for item in results %}
         <li class="mb-2">
+          <!-- JINJA URL GENERATION EXAMPLE:
+               url_for('view', item_id=item['id']) creates a link to view this specific item.
+               This allows users to click on search results to see full details. -->
           <a href="{{ url_for('view', item_id=item['id']) }}" class="font-bold text-blue-700 hover:underline">
+            <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+                 {{ item['name'] }} shows the name of this search result item. -->
             {{ item['name'] }}
           </a>
+          <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+               {{ item['description'] }} shows a preview of the description.
+               The — character separates the name from the description for better readability. -->
           <span class="text-gray-700">— {{ item['description'] }}</span>
         </li>
       {% endfor %}
     </ul>
   {% else %}
+    <!-- JINJA CONDITIONAL ELSE EXAMPLE:
+         This message shows when there are no search results.
+         It's the "else" part of the if statement above. -->
     <p class="text-gray-600">No results found.</p>
   {% endif %}
-  {% endblock %}
+{% endblock %}

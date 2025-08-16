@@ -1,10 +1,29 @@
+<!-- JINJA TEMPLATE INHERITANCE EXAMPLE:
+     This template extends base.html and overrides the title block. -->
 {% extends "base.html" %}
+
+<!-- JINJA DYNAMIC TITLE EXAMPLE:
+     The page title is set to the item's name: {{ item['name'] }}
+     This means each item page will have a unique title in the browser tab.
+     The item variable was passed from app.py: render_template("view.html", item=item) -->
 {% block title %}{{ item['name'] }}{% endblock %}
 
 {% block content %}
   <div class="border border-blue-400 bg-blue-50 rounded-lg p-6 mb-6">
+    <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+         {{ item['name'] }} displays the name of this specific item.
+         This creates a personalized heading for each item page. -->
     <h2 class="text-2xl font-bold text-blue-800 mb-2">{{ item['name'] }}</h2>
+    
+    <!-- JINJA VARIABLE DISPLAY EXAMPLE:
+         {{ item['description'] }} displays the full description of this item.
+         Unlike the search results page, this shows the complete description text. -->
     <p class="text-blue-700 text-lg">{{ item['description'] }}</p>
+    
+    <!-- JINJA HARDCODED URL EXAMPLE:
+         This link goes directly to "/" (the home page).
+         Note: We could also use {{ url_for('index') }} for consistency,
+         but sometimes hardcoded URLs are simpler for basic navigation. -->
     <a href="/" class="mt-4 inline-block text-blue-600 hover:underline">← Back to all items</a>
   </div>
 {% endblock %}
