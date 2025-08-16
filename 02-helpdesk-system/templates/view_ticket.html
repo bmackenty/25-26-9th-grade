@@ -1,0 +1,267 @@
+{# HELP DESK VIEW TICKET - TWO-COLUMN LAYOUT
+===============================================
+
+This template demonstrates a two-column layout for viewing tickets:
+- LEFT COLUMN: Ticket details and management options
+- RIGHT COLUMN: Conversation history and responses
+
+Key Design Elements:
+1. TICKET DETAILS: Comprehensive ticket information
+2. CONVERSATION THREAD: Chronological response history
+3. MANAGEMENT CONTROLS: Status and priority updates
+4. RESPONSE FORM: Easy way to add new responses
+5. ROLE-BASED ACCESS: Different options for different user types
+
+This shows students how to create detailed view interfaces
+that organize information logically and provide clear actions.
+#}
+
+{% extends "base.html" %}
+
+{% block title %}{{ ticket.title }} - Help Desk System{% endblock %}
+{% block page_title %}#{{ ticket.id }} - {{ ticket.title }}{% endblock %}
+{% block page_subtitle %}Support ticket details and conversation{% endblock %}
+
+{% block content %}
+{# TWO-COLUMN TICKET VIEW LAYOUT
+   ===============================
+   This creates a comprehensive ticket viewing experience with:
+   - Left side: Ticket details and management controls
+   - Right side: Conversation thread and response form
+   
+   Students will see how to organize complex information
+   in a way that's both functional and visually appealing. #}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    {# LEFT COLUMN - TICKET DETAILS AND MANAGEMENT #}
+    <div class="lg:col-span-1 space-y-6">
+        
+        {# TICKET INFORMATION CARD #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">Ticket Information</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                
+                {# STATUS AND PRIORITY BADGES #}
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1 text-sm font-medium rounded-full 
+                        {% if ticket.status == 'open' %}bg-orange-500/20 text-orange-400
+                        {% elif ticket.status == 'in_progress' %}bg-blue-500/20 text-blue-400
+                        {% elif ticket.status == 'resolved' %}bg-green-500/20 text-green-400
+                        {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                        {{ ticket.status.replace('_', ' ').title() }}
+                    </span>
+                    <span class="px-3 py-1 text-sm font-medium rounded-full 
+                        {% if ticket.priority == 'critical' %}bg-red-500/20 text-red-400
+                        {% elif ticket.priority == 'high' %}bg-orange-500/20 text-orange-400
+                        {% elif ticket.priority == 'medium' %}bg-yellow-500/20 text-yellow-400
+                        {% else %}bg-green-500/20 text-green-400{% endif %}">
+                        {{ ticket.priority.title() }}
+                    </span>
+                </div>
+                
+                {# TICKET METADATA #}
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Created:</span>
+                        <span class="text-white">{{ ticket.created_at.split(' ')[0] if ticket.created_at else 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Updated:</span>
+                        <span class="text-white">{{ ticket.updated_at.split(' ')[0] if ticket.updated_at else 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Category:</span>
+                        <span class="text-white">{{ ticket.category_name or 'No Category' }}</span>
+                    </div>
+                    {% if user.role in ['admin', 'agent'] %}
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Customer:</span>
+                        <span class="text-white">{{ ticket.customer_name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ticket.assigned_agent_id %}
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Assigned to:</span>
+                        <span class="text-white">{{ ticket.agent_name or 'Unknown' }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {# TICKET MANAGEMENT (Admin/Agent only) #}
+        {% if user.role in ['admin', 'agent'] %}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">Manage Ticket</h3>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ url_for('update_ticket', ticket_id=ticket.id) }}" class="space-y-4">
+                    
+                    {# STATUS UPDATE #}
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-helpdesk-300 mb-2">Update Status</label>
+                        <select name="status" id="status" class="w-full bg-helpdesk-700 border border-helpdesk-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                            <option value="">Keep current status</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    
+                    {# PRIORITY UPDATE #}
+                    <div>
+                        <label for="priority" class="block text-sm font-medium text-helpdesk-300 mb-2">Update Priority</label>
+                        <select name="priority" id="priority" class="w-full bg-helpdesk-700 border border-helpdesk-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                            <option value="">Keep current priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    
+                    {# AGENT ASSIGNMENT (Admin only) #}
+                    {% if user.role == 'admin' and agents %}
+                    <div>
+                        <label for="assigned_agent_id" class="block text-sm font-medium text-helpdesk-300 mb-2">Assign Agent</label>
+                        <select name="assigned_agent_id" id="assigned_agent_id" class="w-full bg-helpdesk-700 border border-helpdesk-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                            <option value="">Unassigned</option>
+                            {% for agent in agents %}
+                            <option value="{{ agent.id }}" {% if ticket.assigned_agent_id == agent.id %}selected{% endif %}>{{ agent.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    
+                    <button type="submit" class="w-full bg-accent-600 hover:bg-accent-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Update Ticket
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        
+        {# QUICK ACTIONS #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700 p-4">
+            <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <div class="space-y-2">
+                <a href="{{ url_for('tickets') }}" class="flex items-center space-x-2 px-3 py-2 bg-helpdesk-700 hover:bg-helpdesk-600 rounded-lg text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Back to Tickets</span>
+                </a>
+                <a href="{{ url_for('new_ticket') }}" class="flex items-center space-x-2 px-3 py-2 bg-accent-600 hover:bg-accent-700 rounded-lg text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Create New Ticket</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {# RIGHT COLUMN - CONVERSATION THREAD #}
+    <div class="lg:col-span-2 space-y-6">
+        
+        {# TICKET DESCRIPTION #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">Description</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-helpdesk-300 whitespace-pre-wrap">{{ ticket.description }}</p>
+            </div>
+        </div>
+        
+        {# CONVERSATION THREAD #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">Conversation</h3>
+                <p class="text-sm text-helpdesk-400 mt-1">{{ responses|length }} response{{ 's' if responses|length != 1 else '' }}</p>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                {% if responses %}
+                    {% for response in responses %}
+                    <div class="flex space-x-4">
+                        {# USER AVATAR #}
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold text-sm">{{ response.username[0].upper() }}</span>
+                            </div>
+                        </div>
+                        
+                        {# RESPONSE CONTENT #}
+                        <div class="flex-1 min-w-0">
+                            <div class="bg-helpdesk-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-white">{{ response.username }}</span>
+                                    <span class="text-xs text-helpdesk-400">{{ response.created_at.split(' ')[0] if response.created_at else 'N/A' }}</span>
+                                </div>
+                                <p class="text-helpdesk-300 whitespace-pre-wrap">{{ response.message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-helpdesk-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-helpdesk-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-medium text-white mb-2">No responses yet</h4>
+                        <p class="text-helpdesk-400">Be the first to respond to this ticket</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {# ADD RESPONSE FORM #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">Add Response</h3>
+                <p class="text-sm text-helpdesk-400 mt-1">Help resolve this ticket by adding your response</p>
+            </div>
+            
+            <div class="p-6">
+                <form method="POST" action="{{ url_for('respond_to_ticket', ticket_id=ticket.id) }}" class="space-y-4">
+                    
+                    {# RESPONSE MESSAGE #}
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-helpdesk-300 mb-2">
+                            Your Response <span class="text-red-400">*</span>
+                        </label>
+                        <textarea 
+                            id="message" 
+                            name="message" 
+                            rows="4"
+                            required
+                            class="block w-full px-4 py-3 bg-helpdesk-700 border border-helpdesk-600 rounded-lg text-white placeholder-helpdesk-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors resize-vertical"
+                            placeholder="Type your response here..."
+                        ></textarea>
+                        <p class="mt-1 text-xs text-helpdesk-400">Be helpful and specific in your response</p>
+                    </div>
+                    
+                    {# SUBMIT BUTTON #}
+                    <div class="flex justify-end">
+                        <button 
+                            type="submit"
+                            class="px-6 py-2 bg-gradient-to-r from-accent-600 to-purple-600 hover:from-accent-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                        >
+                            Send Response
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

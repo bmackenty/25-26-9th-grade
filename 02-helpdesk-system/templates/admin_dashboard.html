@@ -1,0 +1,328 @@
+{# HELP DESK ADMIN DASHBOARD
+=============================
+
+This template demonstrates an admin dashboard with:
+- System overview statistics
+- Recent ticket activity
+- User management insights
+- Administrative controls
+- Professional dashboard layout
+
+Key Design Elements:
+1. STATISTICS CARDS: Key system metrics
+2. RECENT ACTIVITY: Latest ticket updates
+3. ADMIN CONTROLS: System management options
+4. RESPONSIVE DESIGN: Adapts to different screen sizes
+5. PROFESSIONAL LAYOUT: Clean, organized information display
+
+This shows students how to create administrative interfaces
+that provide comprehensive system oversight.
+#}
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Help Desk System{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block page_subtitle %}System overview and management{% endblock %}
+
+{% block content %}
+{# ADMIN DASHBOARD LAYOUT
+   =======================
+   This creates a comprehensive administrative overview with:
+   - System statistics and metrics
+   - Recent activity monitoring
+   - Administrative controls
+   - Professional dashboard styling
+   
+   Students will see how to create administrative interfaces
+   that provide clear oversight and control. #}
+
+<div class="space-y-6">
+    
+    {# SYSTEM STATISTICS CARDS #}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        {# TOTAL USERS CARD #}
+        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm">Total Users</p>
+                    <p class="text-3xl font-bold">{{ stats.total_users }}</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        {# CUSTOMERS CARD #}
+        <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm">Customers</p>
+                    <p class="text-3xl font-bold">{{ stats.customers }}</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        {# AGENTS CARD #}
+        <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-100 text-sm">Support Agents</p>
+                    <p class="text-3xl font-bold">{{ stats.agents }}</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        {# TOTAL TICKETS CARD #}
+        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-orange-100 text-sm">Total Tickets</p>
+                    <p class="text-3xl font-bold">{{ stats.total_tickets }}</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {# MAIN CONTENT GRID #}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {# LEFT COLUMN - SYSTEM OVERVIEW #}
+        <div class="lg:col-span-1 space-y-6">
+            
+            {# SYSTEM STATUS #}
+            <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+                <div class="p-6 border-b border-helpdesk-700">
+                    <h3 class="text-lg font-semibold text-white">System Status</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-helpdesk-400">Open Tickets</span>
+                        <span class="text-lg font-semibold text-orange-400">{{ stats.open_tickets }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-helpdesk-400">Response Time</span>
+                        <span class="text-sm text-green-400">Good</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-helpdesk-400">System Health</span>
+                        <span class="text-sm text-green-400">Operational</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-helpdesk-400">Database</span>
+                        <span class="text-sm text-green-400">Connected</span>
+                    </div>
+                </div>
+            </div>
+            
+            {# QUICK ACTIONS #}
+            <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+                <div class="p-6 border-b border-helpdesk-700">
+                    <h3 class="text-lg font-semibold text-white">Quick Actions</h3>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{{ url_for('tickets') }}" class="flex items-center space-x-3 px-3 py-2 bg-helpdesk-700 hover:bg-helpdesk-600 rounded-lg text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>View All Tickets</span>
+                    </a>
+                    <a href="{{ url_for('new_ticket') }}" class="flex items-center space-x-3 px-3 py-2 bg-accent-600 hover:bg-accent-700 rounded-lg text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Create Ticket</span>
+                    </a>
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-3 px-3 py-2 bg-helpdesk-700 hover:bg-helpdesk-600 rounded-lg text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+            </div>
+            
+            {# SYSTEM INFO #}
+            <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+                <div class="p-6 border-b border-helpdesk-700">
+                    <h3 class="text-lg font-semibold text-white">System Information</h3>
+                </div>
+                <div class="p-6 space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Version:</span>
+                        <span class="text-white">1.0.0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Environment:</span>
+                        <span class="text-white">Development</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Last Backup:</span>
+                        <span class="text-white">Today</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-helpdesk-400">Uptime:</span>
+                        <span class="text-white">99.9%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# RIGHT COLUMN - RECENT ACTIVITY #}
+        <div class="lg:col-span-2 space-y-6">
+            
+            {# RECENT TICKETS #}
+            <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+                <div class="p-6 border-b border-helpdesk-700">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-white">Recent Ticket Activity</h3>
+                        <a href="{{ url_for('tickets') }}" class="text-accent-400 hover:text-accent-300 text-sm font-medium">View All</a>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    {% if recent_tickets %}
+                        <div class="space-y-4">
+                            {% for ticket in recent_tickets %}
+                            <div class="bg-helpdesk-700 rounded-lg p-4 border border-helpdesk-600">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h4 class="font-medium text-white">#{{ ticket.id }} - {{ ticket.title }}</h4>
+                                            <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                                {% if ticket.status == 'open' %}bg-orange-500/20 text-orange-400
+                                                {% elif ticket.status == 'in_progress' %}bg-blue-500/20 text-blue-400
+                                                {% elif ticket.status == 'resolved' %}bg-green-500/20 text-green-400
+                                                {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                                                {{ ticket.status.replace('_', ' ').title() }}
+                                            </span>
+                                            <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                                {% if ticket.priority == 'critical' %}bg-red-500/20 text-red-400
+                                                {% elif ticket.priority == 'high' %}bg-orange-500/20 text-orange-400
+                                                {% elif ticket.priority == 'medium' %}bg-yellow-500/20 text-yellow-400
+                                                {% else %}bg-green-500/20 text-green-400{% endif %}">
+                                                {{ ticket.priority.title() }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="flex items-center space-x-4 text-sm text-helpdesk-400">
+                                            <span class="flex items-center space-x-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                <span>{{ ticket.customer_name }}</span>
+                                            </span>
+                                            {% if ticket.category_name %}
+                                            <span class="flex items-center space-x-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                                </svg>
+                                                <span>{{ ticket.category_name }}</span>
+                                            </span>
+                                            {% endif %}
+                                            <span class="flex items-center space-x-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                <span>{{ ticket.created_at.split(' ')[0] if ticket.created_at else 'N/A' }}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="ml-4 text-accent-400 hover:text-accent-300">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-helpdesk-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-helpdesk-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-lg font-medium text-white mb-2">No tickets yet</h4>
+                            <p class="text-helpdesk-400">The system is ready for support requests</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {# SYSTEM METRICS #}
+            <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+                <div class="p-6 border-b border-helpdesk-700">
+                    <h3 class="text-lg font-semibold text-white">Performance Metrics</h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-helpdesk-400">Ticket Resolution Rate</span>
+                                    <span class="text-white">85%</span>
+                                </div>
+                                <div class="w-full bg-helpdesk-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-helpdesk-400">Average Response Time</span>
+                                    <span class="text-white">2.3 hours</span>
+                                </div>
+                                <div class="w-full bg-helpdesk-700 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-helpdesk-400">Customer Satisfaction</span>
+                                    <span class="text-white">92%</span>
+                                </div>
+                                <div class="w-full bg-helpdesk-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-helpdesk-400">System Uptime</span>
+                                    <span class="text-white">99.9%</span>
+                                </div>
+                                <div class="w-full bg-helpdesk-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 99%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

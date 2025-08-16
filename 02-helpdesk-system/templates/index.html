@@ -1,0 +1,254 @@
+{# HELP DESK DASHBOARD - TWO-COLUMN LAYOUT
+===============================================
+
+This template demonstrates the two-column layout structure:
+- LEFT COLUMN: Statistics and overview cards
+- RIGHT COLUMN: Recent tickets and activity
+
+Key Design Elements:
+1. STATISTICS CARDS: Color-coded metrics with icons
+2. RECENT TICKETS: Interactive list with status badges
+3. RESPONSIVE GRID: Adapts to different screen sizes
+4. MODERN CARDS: Hover effects and professional styling
+
+This shows students how to create dashboard layouts that are
+completely different from simple list views.
+#}
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Help Desk System{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, {{ user.username }}!{% endblock %}
+
+{% block content %}
+{# TWO-COLUMN DASHBOARD LAYOUT
+   ===========================
+   This creates a professional dashboard with:
+   - Left side: Key metrics and statistics
+   - Right side: Recent activity and tickets
+   
+   Students will see how to organize information
+   in a way that's both functional and visually appealing. #}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    {# LEFT COLUMN - STATISTICS AND OVERVIEW #}
+    <div class="lg:col-span-1 space-y-6">
+        
+        {# WELCOME CARD #}
+        <div class="bg-gradient-to-br from-accent-600 to-purple-700 rounded-xl p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold">Welcome back!</h3>
+                    <p class="text-accent-100 text-sm">{{ user.username }}</p>
+                </div>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        {# STATISTICS CARDS #}
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-white">Your Overview</h3>
+            
+            {# TOTAL TICKETS CARD #}
+            <div class="bg-helpdesk-800 rounded-lg p-4 border border-helpdesk-700 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-helpdesk-400">Total Tickets</p>
+                        <p class="text-2xl font-bold text-white">{{ stats.total }}</p>
+                    </div>
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            {# OPEN TICKETS CARD #}
+            <div class="bg-helpdesk-800 rounded-lg p-4 border border-helpdesk-700 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-helpdesk-400">Open Tickets</p>
+                        <p class="text-2xl font-bold text-orange-400">{{ stats.open }}</p>
+                    </div>
+                    <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            {# IN PROGRESS CARD #}
+            <div class="bg-helpdesk-800 rounded-lg p-4 border border-helpdesk-700 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-helpdesk-400">In Progress</p>
+                        <p class="text-2xl font-bold text-blue-400">{{ stats.in_progress }}</p>
+                    </div>
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            {# RESOLVED CARD #}
+            <div class="bg-helpdesk-800 rounded-lg p-4 border border-helpdesk-700 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-helpdesk-400">Resolved</p>
+                        <p class="text-2xl font-bold text-green-400">{{ stats.resolved }}</p>
+                    </div>
+                    <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# QUICK ACTIONS #}
+        <div class="bg-helpdesk-800 rounded-lg p-4 border border-helpdesk-700">
+            <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <div class="space-y-2">
+                <a href="{{ url_for('new_ticket') }}" class="flex items-center space-x-3 px-3 py-2 bg-accent-600 hover:bg-accent-700 rounded-lg text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Create New Ticket</span>
+                </a>
+                <a href="{{ url_for('tickets') }}" class="flex items-center space-x-3 px-3 py-2 bg-helpdesk-700 hover:bg-helpdesk-600 rounded-lg text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>View All Tickets</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {# RIGHT COLUMN - RECENT TICKETS AND ACTIVITY #}
+    <div class="lg:col-span-2 space-y-6">
+        
+        {# RECENT TICKETS SECTION #}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-white">Recent Tickets</h3>
+                    <a href="{{ url_for('tickets') }}" class="text-accent-400 hover:text-accent-300 text-sm font-medium">View All</a>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                {% if recent_tickets %}
+                    <div class="space-y-4">
+                        {% for ticket in recent_tickets %}
+                        <div class="bg-helpdesk-700 rounded-lg p-4 border border-helpdesk-600 card-hover">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h4 class="font-medium text-white">{{ ticket.title }}</h4>
+                                        {# STATUS BADGE #}
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                            {% if ticket.status == 'open' %}bg-orange-500/20 text-orange-400
+                                            {% elif ticket.status == 'in_progress' %}bg-blue-500/20 text-blue-400
+                                            {% elif ticket.status == 'resolved' %}bg-green-500/20 text-green-400
+                                            {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                                            {{ ticket.status.replace('_', ' ').title() }}
+                                        </span>
+                                        {# PRIORITY BADGE #}
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                            {% if ticket.priority == 'critical' %}bg-red-500/20 text-red-400
+                                            {% elif ticket.priority == 'high' %}bg-orange-500/20 text-orange-400
+                                            {% elif ticket.priority == 'medium' %}bg-yellow-500/20 text-yellow-400
+                                            {% else %}bg-green-500/20 text-green-400{% endif %}">
+                                            {{ ticket.priority.title() }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4 text-sm text-helpdesk-400">
+                                        {% if ticket.category_name %}
+                                        <span class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                            </svg>
+                                            <span>{{ ticket.category_name }}</span>
+                                        </span>
+                                        {% endif %}
+                                        
+                                        {% if user.role in ['admin', 'agent'] and ticket.customer_name %}
+                                        <span class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                            <span>{{ ticket.customer_name }}</span>
+                                        </span>
+                                        {% endif %}
+                                        
+                                        <span class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span>{{ ticket.updated_at.split(' ')[0] if ticket.updated_at else 'N/A' }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="ml-4 text-accent-400 hover:text-accent-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-helpdesk-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-helpdesk-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-medium text-white mb-2">No tickets yet</h4>
+                        <p class="text-helpdesk-400 mb-4">Get started by creating your first support ticket</p>
+                        <a href="{{ url_for('new_ticket') }}" class="inline-flex items-center px-4 py-2 bg-accent-600 hover:bg-accent-700 rounded-lg text-white font-medium transition-colors">
+                            Create Ticket
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {# SYSTEM STATUS SECTION (Admin/Agent only) #}
+        {% if user.role in ['admin', 'agent'] %}
+        <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+            <div class="p-6 border-b border-helpdesk-700">
+                <h3 class="text-lg font-semibold text-white">System Status</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-helpdesk-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-400">{{ stats.open }}</div>
+                        <div class="text-sm text-helpdesk-400">Tickets Awaiting Response</div>
+                    </div>
+                    <div class="bg-helpdesk-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-400">{{ stats.in_progress }}</div>
+                        <div class="text-sm text-helpdesk-400">Tickets In Progress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

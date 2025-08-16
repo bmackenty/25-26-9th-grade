@@ -1,0 +1,242 @@
+{# HELP DESK SYSTEM - BASE TEMPLATE
+===============================================
+
+This template demonstrates a COMPLETELY DIFFERENT design approach from the CRUD app:
+- Dark theme with accent colors (vs. light blue theme)
+- Two-column layout structure (vs. single-column)
+- Modern card-based design (vs. simple forms)
+- Professional help desk aesthetic (vs. basic CRUD interface)
+
+Key Design Differences:
+1. COLOR SCHEME: Dark background with purple/blue accents
+2. LAYOUT: Two-column responsive design
+3. TYPOGRAPHY: More professional, business-like fonts
+4. COMPONENTS: Cards, badges, and modern UI elements
+5. NAVIGATION: Sidebar navigation vs. top navigation
+
+This shows students how Tailwind CSS can create vastly different applications
+using the same framework and tools.
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Help Desk System{% endblock %}</title>
+    
+    {# TAILWIND CSS - Different CDN for variety #}
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    {# CUSTOM TAILWIND CONFIGURATION
+       This shows students how to customize Tailwind's default colors and spacing #}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'helpdesk': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        'accent': {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    {# ALPINE.JS for interactivity #}
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    {# CUSTOM CSS for additional styling #}
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-helpdesk-900 text-helpdesk-100 min-h-screen">
+    {# TWO-COLUMN LAYOUT STRUCTURE
+       ===========================
+       This creates a modern dashboard layout with:
+       - Left sidebar: Navigation and user info
+       - Right main area: Page content
+       
+       Students will see how to create professional layouts
+       that are different from simple single-column designs. #}
+    
+    <div class="flex h-screen">
+        {# LEFT SIDEBAR - Navigation and User Info #}
+        <div class="w-64 bg-helpdesk-800 border-r border-helpdesk-700 flex flex-col">
+            
+            {# LOGO AND BRANDING SECTION #}
+            <div class="p-6 border-b border-helpdesk-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-accent-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">HelpDesk</h1>
+                        <p class="text-sm text-helpdesk-400">Support System</p>
+                    </div>
+                </div>
+            </div>
+            
+            {# USER INFO SECTION #}
+            {% if session.get('user_id') %}
+            <div class="p-4 border-b border-helpdesk-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <span class="text-white font-semibold text-sm">{{ session.get('username', 'U')[0].upper() }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-white">{{ session.get('username', 'User') }}</p>
+                        <p class="text-xs text-helpdesk-400 capitalize">{{ session.get('role', 'user') }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {# NAVIGATION MENU #}
+            <nav class="flex-1 p-4 space-y-2">
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                    
+                    <a href="{{ url_for('tickets') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Tickets</span>
+                    </a>
+                    
+                    <a href="{{ url_for('new_ticket') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>New Ticket</span>
+                    </a>
+                    
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span>Admin</span>
+                    </a>
+                    {% endif %}
+                    
+                    <div class="pt-4 border-t border-helpdesk-700">
+                        <a href="{{ url_for('logout') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>Login</span>
+                    </a>
+                    
+                    <a href="{{ url_for('register') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-helpdesk-300 hover:bg-helpdesk-700 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                        <span>Register</span>
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+        
+        {# RIGHT MAIN CONTENT AREA #}
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            {# TOP HEADER BAR #}
+            <header class="bg-helpdesk-800 border-b border-helpdesk-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">{% block page_title %}Help Desk System{% endblock %}</h2>
+                        <p class="text-sm text-helpdesk-400">{% block page_subtitle %}Manage support tickets efficiently{% endblock %}</p>
+                    </div>
+                    
+                    {# FLASH MESSAGE DISPLAY #}
+                    <div class="flex-1 max-w-md mx-8">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="bg-{{ 'green' if category == 'success' else 'red' if category == 'error' else 'blue' }}-500 text-white px-4 py-2 rounded-lg text-sm">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    
+                    {# RIGHT SIDE ACTIONS #}
+                    <div class="flex items-center space-x-4">
+                        {% block header_actions %}{% endblock %}
+                    </div>
+                </div>
+            </header>
+            
+            {# MAIN CONTENT SCROLLABLE AREA #}
+            <main class="flex-1 overflow-y-auto bg-helpdesk-900">
+                <div class="p-6">
+                    {# TWO-COLUMN CONTENT LAYOUT
+                       =========================
+                       This is where child templates will define their two-column structure.
+                       Each page can choose how to use the left/right columns for different purposes.
+                       
+                       Examples:
+                       - Dashboard: Stats on left, recent tickets on right
+                       - Ticket list: Filters on left, ticket table on right
+                       - Ticket view: Ticket info on left, responses on right #}
+                    
+                    {% block content %}
+                    {# CHILD TEMPLATES WILL PUT THEIR TWO-COLUMN CONTENT HERE #}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+{# HELP DESK NEW TICKET FORM
+=============================
+
+This template demonstrates a clean ticket creation form with:
+- Professional form layout
+- Category and priority selection
+- Form validation styling
+- Responsive design
+- Help desk branding consistency
+
+Key Design Elements:
+1. CLEAN FORM LAYOUT: Well-organized input fields
+2. DROPDOWN SELECTIONS: Category and priority options
+3. FORM VALIDATION: Professional input styling
+4. BRANDING: Consistent with help desk theme
+5. USER EXPERIENCE: Clear labels and helpful placeholders
+
+This shows students how to create form interfaces
+that are both functional and visually appealing.
+#}
+
+{% extends "base.html" %}
+
+{% block title %}New Ticket - Help Desk System{% endblock %}
+{% block page_title %}Create New Ticket{% endblock %}
+{% block page_subtitle %}Submit a new support request{% endblock %}
+
+{% block content %}
+{# NEW TICKET FORM LAYOUT
+   ========================
+   This creates a professional ticket creation experience with:
+   - Clean, organized form layout
+   - Proper field validation
+   - Category and priority selection
+   - Consistent styling and branding
+   - Clear user guidance #}
+
+<div class="max-w-4xl mx-auto">
+    
+    {# FORM HEADER #}
+    <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700 mb-6">
+        <div class="p-6 border-b border-helpdesk-700">
+            <h3 class="text-lg font-semibold text-white">Support Ticket Details</h3>
+            <p class="text-sm text-helpdesk-400 mt-1">Please provide detailed information about your issue</p>
+        </div>
+    </div>
+    
+    {# NEW TICKET FORM #}
+    <div class="bg-helpdesk-800 rounded-lg border border-helpdesk-700">
+        <form method="POST" class="p-6 space-y-6">
+            
+            {# TITLE FIELD #}
+            <div>
+                <label for="title" class="block text-sm font-medium text-helpdesk-300 mb-2">
+                    Ticket Title <span class="text-red-400">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    required
+                    class="block w-full px-4 py-3 bg-helpdesk-700 border border-helpdesk-600 rounded-lg text-white placeholder-helpdesk-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors"
+                    placeholder="Brief description of your issue"
+                    maxlength="200"
+                >
+                <p class="mt-1 text-xs text-helpdesk-400">Keep it concise but descriptive</p>
+            </div>
+            
+            {# DESCRIPTION FIELD #}
+            <div>
+                <label for="description" class="block text-sm font-medium text-helpdesk-300 mb-2">
+                    Description <span class="text-red-400">*</span>
+                </label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    rows="6"
+                    required
+                    class="block w-full px-4 py-3 bg-helpdesk-700 border border-helpdesk-600 rounded-lg text-white placeholder-helpdesk-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors resize-vertical"
+                    placeholder="Please provide detailed information about your issue, including:
+• What you were trying to do
+• What happened instead
+• Steps to reproduce the problem
+• Any error messages you saw"
+                ></textarea>
+                <p class="mt-1 text-xs text-helpdesk-400">The more details you provide, the faster we can help you</p>
+            </div>
+            
+            {# CATEGORY AND PRIORITY ROW #}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {# CATEGORY FIELD #}
+                <div>
+                    <label for="category_id" class="block text-sm font-medium text-helpdesk-300 mb-2">
+                        Category
+                    </label>
+                    <select name="category_id" id="category_id" class="w-full px-4 py-3 bg-helpdesk-700 border border-helpdesk-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                        <option value="">Select a category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-1 text-xs text-helpdesk-400">Choose the most appropriate category</p>
+                </div>
+                
+                {# PRIORITY FIELD #}
+                <div>
+                    <label for="priority" class="block text-sm font-medium text-helpdesk-300 mb-2">
+                        Priority <span class="text-red-400">*</span>
+                    </label>
+                    <select name="priority" id="priority" required class="w-full px-4 py-3 bg-helpdesk-700 border border-helpdesk-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                        <option value="">Select priority level</option>
+                        <option value="low">Low - Minor issue, not urgent</option>
+                        <option value="medium" selected>Medium - Standard issue</option>
+                        <option value="high">High - Important issue</option>
+                        <option value="critical">Critical - System down or major problem</option>
+                    </select>
+                    <p class="mt-1 text-xs text-helpdesk-400">Choose based on business impact</p>
+                </div>
+            </div>
+            
+            {# PRIORITY GUIDELINES #}
+            <div class="bg-helpdesk-700 rounded-lg p-4 border border-helpdesk-600">
+                <h4 class="text-sm font-medium text-white mb-3">Priority Guidelines</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-helpdesk-400">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span><strong>Low:</strong> Feature requests, minor bugs</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span><strong>Medium:</strong> Standard support issues</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <span><strong>High:</strong> Important functionality broken</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span><strong>Critical:</strong> System down, data loss</span>
+                    </div>
+                </div>
+            </div>
+            
+            {# FORM ACTIONS #}
+            <div class="flex items-center justify-between pt-6 border-t border-helpdesk-700">
+                <a href="{{ url_for('tickets') }}" class="px-6 py-2 bg-helpdesk-700 hover:bg-helpdesk-600 text-white rounded-lg font-medium transition-colors">
+                    Cancel
+                </a>
+                <button 
+                    type="submit"
+                    class="px-8 py-3 bg-gradient-to-r from-accent-600 to-purple-600 hover:from-accent-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                >
+                    Create Ticket
+                </button>
+            </div>
+            
+        </form>
+    </div>
+    
+    {# HELPFUL TIPS #}
+    <div class="mt-6 bg-helpdesk-800 rounded-lg border border-helpdesk-700 p-6">
+        <h4 class="text-lg font-semibold text-white mb-4">Tips for Faster Resolution</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-accent-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-3 h-3 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Be Specific</p>
+                        <p class="text-xs text-helpdesk-400">Include exact error messages and steps to reproduce</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-accent-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-3 h-3 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Include Context</p>
+                        <p class="text-xs text-helpdesk-400">What were you trying to accomplish?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-accent-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-3 h-3 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Choose Right Priority</p>
+                        <p class="text-xs text-helpdesk-400">Don't over-prioritize minor issues</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-accent-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-3 h-3 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-white">Attach Screenshots</p>
+                        <p class="text-xs text-helpdesk-400">Visual evidence helps us understand faster</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
