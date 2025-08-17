@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}BlogSpace - Share Your Stories{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-blog-100 to-blog-200 rounded-3xl p-8 md:p-12 mb-12 text-center">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-6xl font-display font-bold text-blog-800 mb-6">
+            Welcome to BlogSpace
+        </h1>
+        <p class="text-xl md:text-2xl text-blog-700 mb-8">
+            A platform where ideas come to life.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            {% if not session.get('user_id') %}
+                <a href="{{ url_for('register') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-8 py-4 rounded-xl text-lg font-semibold">
+                    Start Writing Today
+                </a>
+                <a href="{{ url_for('posts') }}" class="bg-white hover:bg-gray-100 text-blog-700 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-blog-200">
+                    Explore Posts
+                </a>
+            {% else %}
+                <a href="{{ url_for('new_post') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-8 py-4 rounded-xl text-lg font-semibold">
+                    Create New Post
+                </a>
+                <a href="{{ url_for('posts') }}" class="bg-white hover:bg-gray-100 text-blog-700 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-blog-200">
+                    View All Posts
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Posts Section -->
+{% if featured_posts %}
+<section class="mb-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-800 mb-4">
+            Featured Stories
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Handpicked articles from our community
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for post in featured_posts %}
+        <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Featured Image -->
+            {% if post.featured_image %}
+            <div class="h-48 overflow-hidden">
+                <img src="{{ url_for('static', filename=post.featured_image) }}" 
+                     alt="Featured image for {{ post.title }}"
+                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+            </div>
+            {% endif %}
+            
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-3">
+                    <a href="{{ url_for('view_post', slug=post.slug) }}" class="hover:text-blog-600">
+                        {{ post.title }}
+                    </a>
+                </h3>
+                {% if post.excerpt %}
+                <p class="text-gray-600 text-sm mb-4">{{ post.excerpt }}</p>
+                {% endif %}
+                <div class="text-sm text-gray-500">
+                    <span>{{ post.author_name }}</span>
+                    <span class="mx-2">•</span>
+                    <span>{{ post.created_at if post.created_at else 'Recently' }}</span>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Main Content Area (3 columns) -->
+    <div class="lg:col-span-3">
+        <section class="mb-12">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl md:text-3xl font-display font-bold text-gray-800">
+                    Latest Posts
+                </h2>
+                <a href="{{ url_for('posts') }}" class="text-blog-600 hover:text-blog-700 font-medium">
+                    View All →
+                </a>
+            </div>
+            
+            <div class="space-y-6">
+                {% for post in recent_posts %}
+                <article class="bg-white rounded-xl shadow-md border-l-4 border-blog-500 overflow-hidden">
+                    <div class="flex">
+                        <!-- Featured Image -->
+                        {% if post.featured_image %}
+                        <div class="w-32 h-24 flex-shrink-0 overflow-hidden">
+                            <img src="{{ url_for('static', filename=post.featured_image) }}" 
+                                 alt="Featured image for {{ post.title }}"
+                                 class="w-full h-full object-cover">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="p-6 flex-1">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                                <a href="{{ url_for('view_post', slug=post.slug) }}" class="hover:text-blog-600">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+                            {% if post.excerpt %}
+                            <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
+                            {% endif %}
+                            <div class="text-sm text-gray-500">
+                                <span>{{ post.author_name }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ post.created_at if post.created_at else 'Recently' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+    
+    <!-- Sidebar (1 column) -->
+    <div class="lg:col-span-1">
+        <!-- Categories Widget -->
+        <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Categories</h3>
+            <div class="space-y-2">
+                {% for category in categories %}
+                <a href="{{ url_for('posts', category=category.name) }}" class="flex items-center justify-between p-2 rounded-lg hover:bg-blog-50">
+                    <span class="text-gray-700">{{ category.name }}</span>
+                    <div class="w-3 h-3 rounded-full" style="background-color: {{ category.color }};"></div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Popular Tags Widget -->
+        <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Popular Tags</h3>
+            <div class="flex flex-wrap gap-2">
+                {% for tag in tags %}
+                <a href="{{ url_for('posts', tag=tag.name) }}" class="inline-block bg-gray-100 hover:bg-blog-100 text-gray-700 hover:text-blog-700 px-3 py-1 rounded-full text-sm">
+                    #{{ tag.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        {% if not session.get('user_id') %}
+        <div class="bg-gradient-to-br from-blog-500 to-blog-600 rounded-xl p-6 text-white text-center">
+            <h3 class="text-lg font-bold mb-2">Join Our Community</h3>
+            <p class="text-blog-100 text-sm mb-4">Start sharing your stories</p>
+            <a href="{{ url_for('register') }}" class="bg-white text-blog-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                Sign Up Now
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

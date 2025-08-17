@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}'s Profile - BlogSpace{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<div class="bg-gradient-to-r from-blog-500 to-blog-600 rounded-3xl p-8 md:p-12 mb-8 text-white">
+    <div class="max-w-4xl mx-auto text-center">
+        <!-- Profile Avatar -->
+        <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-white text-3xl font-bold">{{ user.username[0].upper() }}</span>
+        </div>
+        
+        <!-- User Info -->
+        <h1 class="text-3xl md:text-4xl font-display font-bold mb-4">{{ user.username }}</h1>
+        {% if user.bio %}
+        <p class="text-xl text-blog-100 mb-6 max-w-2xl mx-auto">{{ user.bio }}</p>
+        {% endif %}
+        
+        <!-- Profile Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ posts|length }}</div>
+                <div class="text-blog-100">Posts</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ comments|length }}</div>
+                <div class="text-blog-100">Comments</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold">{{ user.created_at[:4] if user.created_at else '2024' }}</div>
+                <div class="text-blog-100">Member Since</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Content -->
+<div class="max-w-6xl mx-auto">
+    <!-- Navigation Tabs -->
+    <div class="flex border-b border-gray-200 mb-8" x-data="{ activeTab: 'posts' }">
+        <button 
+            @click="activeTab = 'posts'" 
+            :class="activeTab === 'posts' ? 'border-blog-500 text-blog-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+            class="py-2 px-6 border-b-2 font-medium text-sm transition-colors"
+        >
+            My Posts ({{ posts|length }})
+        </button>
+        <button 
+            @click="activeTab = 'comments'" 
+            :class="activeTab === 'comments' ? 'border-blog-500 text-blog-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+            class="py-2 px-6 border-b-2 font-medium text-sm transition-colors"
+        >
+            My Comments ({{ comments|length }})
+        </button>
+        <button 
+            @click="activeTab = 'settings'" 
+            :class="activeTab === 'settings' ? 'border-blog-500 text-blog-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+            class="py-2 px-6 border-b-2 font-medium text-sm transition-colors"
+        >
+            Account Settings
+        </button>
+    </div>
+
+    <!-- Posts Tab -->
+    <div x-show="activeTab === 'posts'" class="space-y-6">
+        {% if posts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for post in posts %}
+            <!-- Post Card -->
+            <article class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                <!-- Post Image Placeholder -->
+                <div class="h-48 bg-gradient-to-br from-blog-100 to-blog-200 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-blog-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                </div>
+                
+                <!-- Post Content -->
+                <div class="p-6">
+                    <!-- Status Badge -->
+                    <div class="flex items-center justify-between mb-3">
+                        {% if post.status == 'published' %}
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
+                            Published
+                        </span>
+                        {% elif post.status == 'draft' %}
+                        <span class="inline-block bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-1 rounded-full">
+                            Draft
+                        </span>
+                        {% else %}
+                        <span class="inline-block bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full">
+                            {{ post.status|title }}
+                        </span>
+                        {% endif %}
+                        
+                        {% if post.featured %}
+                        <span class="inline-block bg-blog-100 text-blog-700 text-xs font-semibold px-2 py-1 rounded-full">
+                            Featured
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Post Title -->
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+                        <a href="{{ url_for('view_post', slug=post.slug) }}" class="hover:text-blog-600 transition-colors">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    
+                    <!-- Post Excerpt -->
+                    {% if post.excerpt %}
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {{ post.excerpt }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Post Meta -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div class="flex items-center space-x-2">
+                            {% if post.category_name %}
+                            <span class="bg-blog-100 text-blog-700 px-2 py-1 rounded-full text-xs">
+                                {{ post.category_name }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <span>{{ post.created_at[:10] if post.created_at else 'Recently' }}</span>
+                    </div>
+                    
+                    <!-- Post Actions -->
+                    <div class="flex items-center justify-between">
+                        <a href="{{ url_for('view_post', slug=post.slug) }}" class="text-blog-600 hover:text-blog-700 font-medium text-sm transition-colors">
+                            View Post →
+                        </a>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <span>{{ post.view_count }} views</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Posts Message -->
+        <div class="text-center py-16">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">No posts yet</h3>
+            <p class="text-gray-600 mb-6">Start sharing your thoughts with the BlogSpace community</p>
+            <a href="{{ url_for('new_post') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                Create Your First Post
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Comments Tab -->
+    <div x-show="activeTab === 'comments'" class="space-y-6">
+        {% if comments %}
+        <div class="space-y-4">
+            {% for comment in comments %}
+            <!-- Comment Item -->
+            <div class="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+                <div class="flex items-start space-x-4">
+                    <div class="w-10 h-10 bg-blog-200 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-blog-700 font-semibold">{{ comment.username[0].upper() }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="font-semibold text-gray-800">{{ comment.username }}</span>
+                            <span class="text-sm text-gray-500">{{ comment.created_at if comment.created_at else 'Recently' }}</span>
+                        </div>
+                        <p class="text-gray-700 mb-3">{{ comment.content }}</p>
+                        
+                        <!-- Comment Context -->
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-sm text-gray-600 mb-1">
+                                <strong>On post:</strong> 
+                                <a href="{{ url_for('view_post', slug=comment.post_slug) }}" class="text-blog-600 hover:text-blog-700 font-medium">
+                                    {{ comment.post_title }}
+                                </a>
+                            </p>
+                            <a href="{{ url_for('view_post', slug=comment.post_slug) }}" class="text-sm text-blog-600 hover:text-blog-700 transition-colors">
+                                View Post →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Comments Message -->
+        <div class="text-center py-16">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">No comments yet</h3>
+            <p class="text-gray-600 mb-6">Start engaging with other posts by leaving thoughtful comments</p>
+            <a href="{{ url_for('posts') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                Explore Posts
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Settings Tab -->
+    <div x-show="activeTab === 'settings'" class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-md p-8 border border-gray-100">
+            <h3 class="text-2xl font-display font-bold text-gray-800 mb-6">Account Settings</h3>
+            
+            <!-- Profile Information -->
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Profile Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                            <input type="text" value="{{ user.username }}" disabled class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-600">
+                            <p class="mt-1 text-xs text-gray-500">Username cannot be changed</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" value="{{ user.email }}" disabled class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-600">
+                            <p class="mt-1 text-xs text-gray-500">Email cannot be changed</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Account Statistics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-blog-600">{{ posts|length }}</div>
+                            <div class="text-sm text-gray-600">Total Posts</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-blog-600">{{ comments|length }}</div>
+                            <div class="text-sm text-gray-600">Total Comments</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-blog-600">{{ user.created_at[:4] if user.created_at else '2024' }}</div>
+                            <div class="text-sm text-gray-600">Member Since</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h4>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ url_for('new_post') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-6 py-3 rounded-xl font-medium transition-colors text-center">
+                            Create New Post
+                        </a>
+                        <a href="{{ url_for('posts') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium transition-colors text-center">
+                            Browse All Posts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 
+STUDENT NOTES - Understanding This Template:
+
+1. ALPINE.JS INTEGRATION:
+   - Uses x-data to manage tab state
+   - x-show directive shows/hides content based on active tab
+   - @click events handle tab switching
+   - Reactive UI without page reloads
+
+2. JINJA TEMPLATING:
+   - Loops through user posts and comments
+   - Conditional rendering based on data availability
+   - Dynamic content generation from database
+   - Safe handling of optional fields
+
+3. TAB SYSTEM:
+   - Three main sections: Posts, Comments, Settings
+   - Each tab shows different user information
+   - Active tab is highlighted with blog theme colors
+   - Content switches smoothly between tabs
+
+4. DATA DISPLAY:
+   - User statistics in the header
+   - Post cards with status indicators
+   - Comment history with context
+   - Account settings and information
+
+5. RESPONSIVE DESIGN:
+   - Grid layouts that adapt to screen size
+   - Mobile-friendly tab navigation
+   - Consistent spacing and typography
+   - Card-based layout for content
+
+6. USER EXPERIENCE:
+   - Clear visual hierarchy
+   - Helpful empty state messages
+   - Quick action buttons
+   - Smooth transitions between tabs
+
+7. CONDITIONAL RENDERING:
+   - Different content for each tab
+   - Empty state handling when no data
+   - Status badges for post states
+   - Contextual information display
+
+8. INTERACTIVITY:
+   - Tab switching without page reload
+   - Hover effects on cards
+   - Interactive buttons and links
+   - Smooth animations and transitions
+
+9. CONTENT ORGANIZATION:
+   - Logical grouping of related information
+   - Clear separation between different data types
+   - Consistent card design throughout
+   - Easy navigation between sections
+-->
+{% endblock %}

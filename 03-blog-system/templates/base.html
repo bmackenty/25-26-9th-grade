@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blog Platform{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom Tailwind configuration for blog theme -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blog': {
+                            50: '#fef7f0',
+                            100: '#fdecd8',
+                            200: '#fbd5b0',
+                            300: '#f8b87d',
+                            400: '#f59344',
+                            500: '#f2751a',
+                            600: '#e35d0f',
+                            700: '#bc460d',
+                            800: '#963812',
+                            900: '#7a3012'
+                        },
+                        'accent': {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+                        }
+                    },
+                    fontFamily: {
+                        'serif': ['Georgia', 'serif'],
+                        'display': ['Playfair Display', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts for elegant typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom CSS for blog-specific styling */
+        .blog-gradient {
+            background: linear-gradient(135deg, #fef7f0 0%, #fdecd8 100%);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-lg border-b-4 border-blog-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-3">
+                        <!-- Book icon representing blog -->
+                        <div class="w-10 h-10 bg-gradient-to-br from-blog-500 to-blog-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 5.477 5.754 5 7.5 5s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.523 18.246 19 16.5 19c-1.746 0-3.332-.477-4.5-1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-display font-bold text-blog-800">BlogSpace</span>
+                    </a>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('index') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        Home
+                    </a>
+                    <a href="{{ url_for('posts') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        Posts
+                    </a>
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('new_post') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            New Post
+                        </a>
+                        <a href="{{ url_for('profile') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Profile
+                        </a>
+                        <a href="{{ url_for('logout') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-gray-700 hover:text-blog-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="bg-blog-600 hover:bg-blog-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif category == 'success' %}bg-green-100 border border-green-400 text-green-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}
+        <!-- This is where the main content from child templates will go -->
+        <!-- Each template that extends this base will fill this block -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Section -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-blog-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 5.477 5.754 5 7.5 5s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.523 18.246 19 16.5 19c-1.746 0-3.332-.477-4.5-1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-display font-bold">BlogSpace</span>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        A modern blogging platform built with Flask. Share your thoughts, 
+                        connect with readers, and build your online presence.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="{{ url_for('index') }}" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{{ url_for('posts') }}" class="hover:text-white transition-colors">All Posts</a></li>
+                        <li><a href="{{ url_for('register') }}" class="hover:text-white transition-colors">Join Us</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>Email: hello@blogspace.com</li>
+                        <li>Follow us on social media</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2024 BlogSpace. Built with Flask and Tailwind CSS for educational purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js Components -->
+    <script>
+        // Global Alpine.js data and functions
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('blogApp', () => ({
+                // Mobile menu state
+                mobileMenuOpen: false,
+                
+                // Toggle mobile menu
+                toggleMobileMenu() {
+                    this.mobileMenuOpen = !this.mobileMenuOpen;
+                },
+                
+                // Close mobile menu
+                closeMobileMenu() {
+                    this.mobileMenuOpen = false;
+                }
+            }));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Web framework
+Flask>=2.2.4
+
+# Database (SQLite is built-in, no additional packages needed)
+# Content formatting (using built-in regex for simple markdown parsing)
+# Authentication (using Flask's built-in sessions, no additional packages needed)

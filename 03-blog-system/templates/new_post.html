@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Post - BlogSpace{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h1 class="text-4xl font-display font-bold text-gray-800 mb-4">Create New Post</h1>
+    <p class="text-lg text-gray-600">
+        Share your thoughts, stories, and insights with the BlogSpace community
+    </p>
+</div>
+
+<!-- New Post Form -->
+<div class="max-w-4xl mx-auto">
+    <form method="POST" action="{{ url_for('new_post') }}" enctype="multipart/form-data" class="space-y-8">
+        <!-- Post Title Section -->
+        <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <label for="title" class="block text-lg font-semibold text-gray-800 mb-3">
+                Post Title <span class="text-red-500">*</span>
+            </label>
+            <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                required 
+                class="block w-full px-4 py-3 text-xl border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors"
+                placeholder="Enter a compelling title for your post..."
+                maxlength="200"
+            >
+            <p class="mt-2 text-sm text-gray-500">
+                A great title captures attention and gives readers a clear idea of what to expect
+            </p>
+        </div>
+
+        <!-- Post Content Section -->
+        <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <label for="content" class="block text-lg font-semibold text-gray-800 mb-3">
+                Post Content <span class="text-red-500">*</span>
+            </label>
+            <textarea 
+                id="content" 
+                name="content" 
+                required 
+                rows="15"
+                class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors resize-none font-serif text-gray-700 leading-relaxed"
+                placeholder="Write your post content here...
+
+## Use Markdown Formatting
+
+You can use markdown-style formatting to make your posts more engaging:
+
+### Headers
+Use # for main headers, ## for subheaders, and ### for smaller headers.
+
+### Text Styling
+- **Bold text** with **double asterisks**
+- *Italic text* with *single asterisks*
+- Create bullet points with dashes
+
+### Structure
+Break your content into paragraphs with blank lines between them.
+
+Share your story, insights, or knowledge with the community!"
+            ></textarea>
+            
+            <!-- Markdown Help -->
+            <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium text-gray-800 mb-2">Markdown Formatting Guide:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                        <strong>Headers:</strong> # Main, ## Sub, ### Section<br>
+                        <strong>Bold:</strong> **text**<br>
+                        <strong>Italic:</strong> *text*<br>
+                        <strong>Lists:</strong> - item
+                    </div>
+                    <div>
+                        <strong>Links:</strong> [text](url)<br>
+                        <strong>Code:</strong> `code`<br>
+                        <strong>Quotes:</strong> > text<br>
+                        <strong>Line breaks:</strong> Double space
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <label for="featured_image" class="block text-lg font-semibold text-gray-800 mb-3">
+                Featured Image
+            </label>
+            
+            <!-- Image Upload Area -->
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blog-400 transition-colors" 
+                 id="upload-area"
+                 onclick="document.getElementById('featured_image').click()">
+                
+                <!-- Upload Icon -->
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                </div>
+                
+                <!-- Upload Text -->
+                <p class="text-lg font-medium text-gray-600 mb-2">
+                    Click to upload an image
+                </p>
+                <p class="text-sm text-gray-500 mb-4">
+                    PNG, JPG, GIF up to 5MB
+                </p>
+                
+                <!-- Hidden File Input -->
+                <input 
+                    type="file" 
+                    id="featured_image" 
+                    name="featured_image" 
+                    accept="image/*"
+                    class="hidden"
+                    onchange="previewImage(this)"
+                >
+                
+                <!-- Image Preview -->
+                <div id="image-preview" class="hidden mt-4">
+                    <img id="preview-img" src="" alt="Preview" class="max-w-full h-32 object-cover rounded-lg mx-auto">
+                    <button type="button" onclick="removeImage()" class="mt-2 text-sm text-red-600 hover:text-red-700 font-medium">
+                        Remove Image
+                    </button>
+                </div>
+            </div>
+            
+            <p class="mt-3 text-sm text-gray-500">
+                A featured image makes your post more engaging and appears in post previews
+            </p>
+        </div>
+
+        <!-- Post Settings Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-6">
+                <!-- Excerpt Section -->
+                <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                    <label for="excerpt" class="block text-lg font-semibold text-gray-800 mb-3">
+                        Post Excerpt
+                    </label>
+                    <textarea 
+                        id="excerpt" 
+                        name="excerpt" 
+                        rows="4"
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors resize-none"
+                        placeholder="Write a brief summary of your post (optional)..."
+                        maxlength="300"
+                    ></textarea>
+                    <p class="mt-2 text-sm text-gray-500">
+                        A compelling excerpt appears in post previews and search results
+                    </p>
+                </div>
+
+                <!-- Category Section -->
+                <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                    <label for="category_id" class="block text-lg font-semibold text-gray-800 mb-3">
+                        Category
+                    </label>
+                    <select 
+                        id="category_id" 
+                        name="category_id" 
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors"
+                    >
+                        <option value="">Select a category (optional)</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Choose a category to help readers find your post
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <!-- Tags Section -->
+                <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                    <label for="tags" class="block text-lg font-semibold text-gray-800 mb-3">
+                        Tags
+                    </label>
+                    <input 
+                        type="text" 
+                        id="tags" 
+                        name="tags" 
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors"
+                        placeholder="python, flask, tutorial, tips"
+                    >
+                    <p class="mt-2 text-sm text-gray-500">
+                        Separate tags with commas. Tags help readers discover your content
+                    </p>
+                    
+                    <!-- Popular Tags -->
+                    <div class="mt-3">
+                        <p class="text-sm text-gray-600 mb-2">Popular tags:</p>
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in tags %}
+                            <span class="inline-block bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                                #{{ tag.name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post Settings -->
+                <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-3">Post Settings</h4>
+                    
+                    <!-- Status -->
+                    <div class="mb-4">
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                            Publication Status
+                        </label>
+                        <select 
+                            id="status" 
+                            name="status" 
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blog-500 focus:border-blog-500 transition-colors"
+                        >
+                            <option value="draft">Save as Draft</option>
+                            <option value="published">Publish Immediately</option>
+                        </select>
+                    </div>
+
+                    <!-- Featured Post -->
+                    <div class="flex items-center">
+                        <input 
+                            id="featured" 
+                            name="featured" 
+                            type="checkbox" 
+                            value="1"
+                            class="h-4 w-4 text-blog-600 focus:ring-blog-500 border-gray-300 rounded"
+                        >
+                        <label for="featured" class="ml-2 block text-sm text-gray-700">
+                            Mark as Featured Post
+                        </label>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Featured posts appear prominently on the homepage
+                    </p>
+                    
+                    <!-- Draft vs Publish Info -->
+                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-xs text-blue-700">
+                            <strong>💡 Tip:</strong> Use "Save as Draft" to work on your post privately, or "Publish Post" to make it visible to everyone immediately.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-end">
+            <!-- Save Draft Button -->
+            <button 
+                type="submit" 
+                name="action" 
+                value="draft"
+                class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+            >
+                Save as Draft
+            </button>
+            
+            <!-- Publish Button -->
+            <button 
+                type="submit" 
+                name="action" 
+                value="published"
+                class="px-8 py-3 bg-blog-600 hover:bg-blog-700 text-white rounded-xl font-medium transition-colors transform hover:scale-105 shadow-lg"
+            >
+                Publish Post
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Writing Tips Section -->
+<div class="mt-16 bg-gradient-to-r from-blog-50 to-accent-50 rounded-2xl p-8 border border-blog-100">
+    <h3 class="text-2xl font-display font-bold text-blog-800 mb-6 text-center">Writing Tips for Great Posts</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blog-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <h4 class="text-lg font-semibold text-blog-800 mb-2">Start Strong</h4>
+            <p class="text-blog-700 text-sm">Hook your readers with an engaging opening that promises value</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blog-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                </svg>
+            </div>
+            <h4 class="text-lg font-semibold text-blog-800 mb-2">Structure Matters</h4>
+            <p class="text-blog-700 text-sm">Use headers, bullet points, and short paragraphs for easy reading</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blog-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                </svg>
+            </div>
+            <h4 class="text-lg font-semibold text-blog-800 mb-2">Engage Readers</h4>
+            <p class="text-blog-700 text-sm">Ask questions, share personal experiences, and encourage discussion</p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Image Upload Functionality -->
+<script>
+{# Function to preview selected image #}
+function previewImage(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const uploadArea = document.getElementById('upload-area');
+    
+    if (file) {
+        {# Check file size (5MB limit) #}
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size must be less than 5MB');
+            input.value = '';
+            return;
+        }
+        
+        {# Check file type #}
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            input.value = '';
+            return;
+        }
+        
+        {# Create preview URL #}
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+            uploadArea.classList.add('border-blog-400', 'bg-blog-50');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+{# Function to remove selected image #}
+function removeImage() {
+    const input = document.getElementById('featured_image');
+    const preview = document.getElementById('image-preview');
+    const uploadArea = document.getElementById('upload-area');
+    
+    input.value = '';
+    preview.classList.add('hidden');
+    uploadArea.classList.remove('border-blog-400', 'bg-blog-50');
+}
+
+{# Drag and drop functionality #}
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('upload-area');
+    
+    {# Prevent default drag behaviors #}
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    {# Highlight drop area when item is dragged over it #}
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    {# Handle dropped files #}
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    function highlight(e) {
+        uploadArea.classList.add('border-blog-400', 'bg-blog-50');
+    }
+    
+    function unhighlight(e) {
+        uploadArea.classList.remove('border-blog-400', 'bg-blog-50');
+    }
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            const input = document.getElementById('featured_image');
+            input.files = files;
+            previewImage(input);
+        }
+    }
+});
+</script>
+
+<!-- 
+STUDENT NOTES - Understanding This Template:
+
+1. FORM STRUCTURE:
+   - Uses POST method to send data to the server
+   - Multiple form sections for different types of content
+   - Proper labels and validation for all required fields
+   - NEW: Image upload field with drag & drop support
+
+2. FORM VALIDATION:
+   - required attribute on title and content fields
+   - maxlength attributes to prevent overly long inputs
+   - Server-side validation in Flask route
+   - NEW: Client-side image validation (size, type)
+
+3. MARKDOWN SUPPORT:
+   - Textarea with markdown formatting guide
+   - Helpful placeholder text with examples
+   - Visual formatting tips for better content
+
+4. JINJA TEMPLATING:
+   - Loops through categories and tags for dropdowns
+   - Dynamic content generation based on available data
+   - Consistent with the base template structure
+
+5. RESPONSIVE DESIGN:
+   - Grid layout that adapts to screen size
+   - Form sections stack on mobile devices
+   - Consistent spacing and typography
+
+6. USER EXPERIENCE:
+   - Clear visual hierarchy and organization
+   - Helpful tips and guidance throughout
+   - Writing tips section for inspiration
+   - Multiple action buttons for different needs
+   - NEW: Interactive image upload with preview
+
+7. FORM HANDLING:
+   - Different submit buttons for different actions
+   - Form data sent to new_post route
+   - Proper field names for Flask processing
+   - NEW: File upload handling with multipart/form-data
+
+8. ACCESSIBILITY:
+   - Proper label associations
+   - Semantic HTML structure
+   - Clear visual feedback
+   - Keyboard navigation support
+
+9. CONTENT ORGANIZATION:
+   - Logical grouping of related fields
+   - Clear sections for different aspects
+   - Helpful descriptions for each field
+
+10. IMAGE UPLOAD FEATURES:
+    - Drag and drop support for modern browsers
+    - File type validation (images only)
+    - File size validation (5MB limit)
+    - Image preview before upload
+    - Remove image functionality
+    - Visual feedback during drag operations
+-->
+{% endblock %}
