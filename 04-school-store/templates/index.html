@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - School Store{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="text-gray-600">Welcome back! Here's what's happening in your store today.</p>
+</div>
+
+<!-- Quick Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Products -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Total Products</p>
+                <p class="text-2xl font-bold text-gray-900">{{ total_products }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Low Stock Alert -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Low Stock Items</p>
+                <p class="text-2xl font-bold text-gray-900">{{ low_stock_products }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">Quick Actions</p>
+                <a href="{{ url_for('pos') }}" class="text-sm text-store-600 hover:text-store-700 font-medium">Start Sale →</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Status -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-600">System Status</p>
+                <p class="text-sm font-medium text-green-600">All Systems Operational</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Sales -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-800">Recent Sales</h2>
+            <a href="{{ url_for('analytics') }}" class="text-store-600 hover:text-store-700 text-sm font-medium">
+                View All →
+            </a>
+        </div>
+        
+        {% if recent_sales %}
+        <div class="space-y-4">
+            {% for sale in recent_sales %}
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                <div>
+                    <p class="font-medium text-gray-800">{{ sale.transaction_id }}</p>
+                    <p class="text-sm text-gray-500">by {{ sale.cashier_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-gray-900">${{ "%.2f"|format(sale.total_amount) }}</p>
+                    <p class="text-sm text-gray-500">{{ sale.created_at[:10] if sale.created_at else 'Recently' }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8 text-gray-500">
+            <p>No recent sales. Start making some sales!</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Low Stock Alerts -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-800">Low Stock Alerts</h2>
+            <a href="{{ url_for('inventory') }}" class="text-store-600 hover:text-store-700 text-sm font-medium">
+                View Inventory →
+            </a>
+        </div>
+        
+        {% if low_stock_items %}
+        <div class="space-y-4">
+            {% for item in low_stock_items %}
+            <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-200">
+                <div>
+                    <p class="font-medium text-gray-800">{{ item.name }}</p>
+                    <p class="text-sm text-gray-500">{{ item.category_name or 'Uncategorized' }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-red-600">{{ item.stock_quantity }} left</p>
+                    <p class="text-sm text-gray-500">Min: {{ item.min_stock_level }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8 text-gray-500">
+            <p>All products are well stocked! 🎉</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="mt-8">
+    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Start Sale -->
+            <a href="{{ url_for('pos') }}" class="group">
+                <div class="text-center p-6 bg-store-50 rounded-xl border-2 border-store-200 hover:border-store-300 transition-colors">
+                    <div class="w-16 h-16 bg-store-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-store-200 transition-colors">
+                        <svg class="w-8 h-8 text-store-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Start Sale</h3>
+                    <p class="text-sm text-gray-600">Process a new transaction</p>
+                </div>
+            </a>
+            
+            <!-- Manage Inventory -->
+            <a href="{{ url_for('inventory') }}" class="group">
+                <div class="text-center p-6 bg-blue-50 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-colors">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Inventory</h3>
+                    <p class="text-sm text-gray-600">Manage products and stock</p>
+                </div>
+            </a>
+            
+            <!-- View Analytics -->
+            <a href="{{ url_for('analytics') }}" class="group">
+                <div class="text-center p-6 bg-green-50 rounded-xl border-2 border-green-200 hover:border-green-300 transition-colors">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Analytics</h3>
+                    <p class="text-sm text-gray-600">View sales reports</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
