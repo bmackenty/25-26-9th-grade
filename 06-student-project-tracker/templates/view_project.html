@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project['title'] }} - Student Project Tracker{% endblock %}
+
+{% block content %}
+<!-- Project Header -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+  <div class="flex items-start justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900">{{ project['title'] }}</h2>
+      <p class="text-gray-600">{{ project['class_name'] }}</p>
+      {% if project['description'] %}
+        <p class="text-gray-700 mt-2">{{ project['description'] }}</p>
+      {% endif %}
+      <div class="flex items-center space-x-4 mt-4">
+        <span class="text-sm text-gray-500">Total Points: <strong>{{ project['total_points'] }}</strong></span>
+        <span class="text-sm text-gray-500">Students: <strong>{{ students|length }}</strong></span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+          {% if project['due_date'] < today %}bg-red-100 text-red-800
+          {% else %}bg-green-100 text-green-800{% endif %}">
+          Due: {{ project['due_date'] }}
+        </span>
+      </div>
+    </div>
+    <div class="text-right">
+      <a href="{{ url_for('projects') }}" class="text-blue-600 hover:text-blue-800 text-sm">
+        ← Back to Projects
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Checkpoints Section -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">Project Checkpoints</h3>
+  
+  {% if checkpoints %}
+    <div class="space-y-4">
+      {% for checkpoint in checkpoints %}
+        <div class="border border-gray-200 rounded-lg p-4 {% if checkpoint['due_date'] < today %}bg-red-50 border-red-200{% endif %}">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-medium text-gray-900">{{ checkpoint['title'] }}</h4>
+              <p class="text-sm text-gray-600">Due: {{ checkpoint['due_date'] }}</p>
+              <p class="text-sm text-gray-500">{{ checkpoint['points'] }} points</p>
+            </div>
+            <div class="text-right">
+              {% if checkpoint['due_date'] < today %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  Overdue
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  On Track
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-500 text-center py-4">No checkpoints created yet.</p>
+  {% endif %}
+</div>
+
+<!-- Student Progress Section -->
+<div class="bg-white rounded-lg shadow-md p-6">
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">Student Progress</h3>
+  
+  {% if students %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for student in students %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                      <span class="text-sm font-medium text-green-800">
+                        {{ student['first_name'][0] }}{{ student['last_name'][0] }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ student['first_name'] }} {{ student['last_name'] }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    {% set progress_percentage = (student['completed_checkpoints'] / checkpoints|length * 100) if checkpoints|length > 0 else 0 %}
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ progress_percentage }}%"></div>
+                  </div>
+                  <span class="text-sm text-gray-900">{{ student['completed_checkpoints'] }}/{{ checkpoints|length }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {% if student['completed_checkpoints'] == checkpoints|length %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Completed
+                  </span>
+                {% elif student['completed_checkpoints'] > 0 %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    In Progress
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Not Started
+                  </span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="openProgressModal({{ student['id'] }}, '{{ student['first_name'] }} {{ student['last_name'] }}')"
+                        class="text-blue-600 hover:text-blue-800">
+                  Update Progress
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-gray-500 text-center py-8">No students assigned to this project.</p>
+  {% endif %}
+</div>
+
+<!-- Progress Update Modal -->
+<div id="progressModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Update Student Progress</h3>
+      <div id="modalContent">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openProgressModal(studentId, studentName) {
+    const modal = document.getElementById('progressModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Create form content
+    const checkpoints = {{ checkpoints|tojson }};
+    let formHTML = `
+      <form id="progressForm" class="space-y-4">
+        <p class="text-sm text-gray-600 mb-4">Update progress for <strong>${studentName}</strong></p>
+    `;
+    
+    checkpoints.forEach(checkpoint => {
+      formHTML += `
+        <div class="border border-gray-200 rounded-lg p-3">
+          <h4 class="font-medium text-gray-900 mb-2">${checkpoint.title}</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-gray-600 mb-1">Status</label>
+              <select name="status_${checkpoint.id}" class="w-full border border-gray-300 rounded px-2 py-1 text-sm">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-600 mb-1">Points</label>
+              <input type="number" name="points_${checkpoint.id}" min="0" max="${checkpoint.points}" 
+                     class="w-full border border-gray-300 rounded px-2 py-1 text-sm" placeholder="0">
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    formHTML += `
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <button type="button" onclick="closeProgressModal()" 
+                class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+          Update Progress
+        </button>
+      </div>
+    </form>
+    `;
+    
+    modalContent.innerHTML = formHTML;
+    modal.classList.remove('hidden');
+    
+    // Handle form submission
+    document.getElementById('progressForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      updateStudentProgress(studentId, checkpoints);
+    });
+  }
+  
+  function closeProgressModal() {
+    document.getElementById('progressModal').classList.add('hidden');
+  }
+  
+  function updateStudentProgress(studentId, checkpoints) {
+    // Collect form data
+    const formData = {};
+    checkpoints.forEach(checkpoint => {
+      formData[`status_${checkpoint.id}`] = document.querySelector(`[name="status_${checkpoint.id}"]`).value;
+      formData[`points_${checkpoint.id}`] = document.querySelector(`[name="points_${checkpoint.id}"]`).value;
+    });
+    
+    // Send update to backend
+    checkpoints.forEach(checkpoint => {
+      const status = formData[`status_${checkpoint.id}`];
+      const points = formData[`points_${checkpoint.id}`];
+      
+      fetch('/api/update_submission/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          student_id: studentId,
+          checkpoint_id: checkpoint.id,
+          status: status,
+          points_earned: points || 0
+        })
+      });
+    });
+    
+    closeProgressModal();
+    // Reload page to show updated progress
+    location.reload();
+  }
+  
+  // Close modal when clicking outside
+  document.getElementById('progressModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeProgressModal();
+    }
+  });
+</script>
+{% endblock %}

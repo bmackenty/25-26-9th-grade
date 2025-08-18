@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Classes - Student Project Tracker{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-2xl font-bold text-gray-900">Classes</h2>
+  <a href="{{ url_for('create_class') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+    </svg>
+    Add New Class
+  </a>
+</div>
+
+{% if classes %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for class in classes %}
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <span class="text-sm text-gray-500">{{ class['academic_year'] }}</span>
+        </div>
+        
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ class['name'] }}</h3>
+        <p class="text-gray-600 mb-4">{{ class['subject'] }}</p>
+        
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-blue-600">{{ class['student_count'] }}</p>
+            <p class="text-xs text-gray-500">Students</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-purple-600">{{ class['project_count'] }}</p>
+            <p class="text-xs text-gray-500">Projects</p>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-500">Created: {{ class['created_at'][:10] }}</span>
+          <a href="{{ url_for('view_class', class_id=class['id']) }}" 
+             class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200">
+            View Details
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">No classes yet</h3>
+    <p class="mt-1 text-sm text-gray-500">Get started by creating your first class.</p>
+    <div class="mt-6">
+      <a href="{{ url_for('create_class') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Class
+      </a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

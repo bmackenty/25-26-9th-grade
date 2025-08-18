@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Create Project - Student Project Tracker{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-900">Create New Project</h2>
+    <p class="text-gray-600">Add a new project with automatic checkpoint generation.</p>
+  </div>
+
+  {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="POST" class="space-y-6">
+    <!-- Project Title -->
+    <div>
+      <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+        Project Title <span class="text-red-500">*</span>
+      </label>
+      <input type="text" 
+             id="title" 
+             name="title" 
+             required
+             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+             placeholder="e.g., Research Paper, Science Fair Project, Math Portfolio">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+        Project Description
+      </label>
+      <textarea id="description" 
+                name="description" 
+                rows="4"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Describe the project requirements, objectives, and deliverables..."></textarea>
+    </div>
+
+    <!-- Class Assignment -->
+    <div>
+      <label for="class_id" class="block text-sm font-medium text-gray-700 mb-2">
+        Assign to Class <span class="text-red-500">*</span>
+      </label>
+      <select id="class_id" 
+              name="class_id"
+              required
+              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+        <option value="">Select a class</option>
+        {% for class in classes %}
+          <option value="{{ class['id'] }}">{{ class['name'] }} ({{ class['subject'] }} - {{ class['academic_year'] }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Due Date -->
+    <div>
+      <label for="due_date" class="block text-sm font-medium text-gray-700 mb-2">
+        Project Due Date <span class="text-red-500">*</span>
+      </label>
+      <input type="date" 
+             id="due_date" 
+             name="due_date" 
+             required
+             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+      <p class="text-xs text-gray-500 mt-1">Checkpoints will be automatically generated based on this date</p>
+    </div>
+
+    <!-- Total Points -->
+    <div>
+      <label for="total_points" class="block text-sm font-medium text-gray-700 mb-2">
+        Total Points <span class="text-red-500">*</span>
+      </label>
+      <input type="number" 
+             id="total_points" 
+             name="total_points" 
+             required
+             min="1"
+             value="100"
+             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+      <p class="text-xs text-gray-500 mt-1">Points will be automatically distributed across checkpoints</p>
+    </div>
+
+    <!-- Checkpoint Preview -->
+    <div class="bg-gray-50 rounded-lg p-4">
+      <h4 class="text-sm font-medium text-gray-700 mb-2">Automatic Checkpoint Generation</h4>
+      <p class="text-xs text-gray-600 mb-3">
+        Based on your due date, the system will automatically create checkpoints:
+      </p>
+      <ul class="text-xs text-gray-600 space-y-1">
+        <li>• <strong>Short projects (≤7 days):</strong> 2 checkpoints (Midpoint Review, Final Submission)</li>
+        <li>• <strong>Medium projects (8-14 days):</strong> 3 checkpoints (Initial Progress, Midpoint Review, Final Submission)</li>
+        <li>• <strong>Long projects (>14 days):</strong> 4 checkpoints (Initial Progress, Quarter Review, Midpoint Review, Final Submission)</li>
+      </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+      <a href="{{ url_for('projects') }}" 
+         class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+        Cancel
+      </a>
+      <button type="submit" 
+              class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+        Create Project
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Set minimum date to today
+  document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('due_date').min = today;
+  });
+</script>
+{% endblock %}

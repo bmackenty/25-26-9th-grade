@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Project Tracker{% endblock %}
+
+{% block content %}
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- Classes Card -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center">
+      <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-600">Total Classes</p>
+        <p class="text-2xl font-semibold text-gray-900">{{ class_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Students Card -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center">
+      <div class="p-3 rounded-full bg-green-100 text-green-600">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-600">Total Students</p>
+        <p class="text-2xl font-semibold text-gray-900">{{ student_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Card -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center">
+      <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-600">Active Projects</p>
+        <p class="text-2xl font-semibold text-gray-900">{{ project_count }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <a href="{{ url_for('create_class') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Add Class
+    </a>
+    <a href="{{ url_for('create_student') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Add Student
+    </a>
+    <a href="{{ url_for('create_project') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      Add Project
+    </a>
+    <a href="{{ url_for('export_csv') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Export CSV
+    </a>
+  </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- Recent Projects -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Recent Projects</h2>
+      <a href="{{ url_for('projects') }}" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
+    </div>
+    
+    {% if recent_projects %}
+      <div class="space-y-4">
+        {% for project in recent_projects %}
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-medium text-gray-900">{{ project['title'] }}</h3>
+                <p class="text-sm text-gray-600">{{ project['class_name'] }}</p>
+                <p class="text-sm text-gray-500">{{ project['student_count'] }} students</p>
+              </div>
+              <div class="text-right">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                  {% if project['due_date'] < today %}bg-red-100 text-red-800
+                  {% else %}bg-green-100 text-green-800{% endif %}">
+                  Due: {{ project['due_date'] }}
+                </span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <a href="{{ url_for('view_project', project_id=project['id']) }}" 
+                 class="text-blue-600 hover:text-blue-800 text-sm">View Details →</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-500 text-center py-8">No projects yet. Create your first project to get started!</p>
+    {% endif %}
+  </div>
+
+  <!-- Students to Contact -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Students to Contact</h2>
+      <span class="text-sm text-gray-500">Overdue submissions</span>
+    </div>
+    
+    {% if students_to_contact %}
+      <div class="space-y-3">
+        {% for student in students_to_contact %}
+          <div class="border border-red-200 rounded-lg p-3 bg-red-50">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-medium text-gray-900">{{ student['first_name'] }} {{ student['last_name'] }}</h4>
+                <p class="text-sm text-gray-600">{{ student['class_name'] }}</p>
+                <p class="text-sm text-gray-500">{{ student['project_title'] }} - {{ student['checkpoint_title'] }}</p>
+              </div>
+              <div class="text-right">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  Overdue
+                </span>
+                <p class="text-xs text-red-600 mt-1">Due: {{ student['due_date'] }}</p>
+              </div>
+            </div>
+            {% if student['email'] %}
+              <div class="mt-2">
+                <a href="mailto:{{ student['email'] }}" 
+                   class="text-blue-600 hover:text-blue-800 text-sm">Send Email</a>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-green-600 text-center py-8">🎉 All students are on track!</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Overdue Projects Section -->
+{% if overdue_projects %}
+  <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold text-red-800 mb-4">⚠️ Overdue Projects</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for project in overdue_projects %}
+        <div class="border border-red-200 rounded-lg p-4 bg-red-50">
+          <h3 class="font-medium text-gray-900">{{ project['title'] }}</h3>
+          <p class="text-sm text-gray-600">{{ project['class_name'] }}</p>
+          <p class="text-sm text-red-600 font-medium">Due: {{ project['due_date'] }}</p>
+          <div class="mt-3">
+            <a href="{{ url_for('view_project', project_id=project['id']) }}" 
+               class="text-blue-600 hover:text-blue-800 text-sm">View Project →</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+<!-- Project Status Chart -->
+<div class="mt-8 bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4">Project Status Overview</h2>
+  <div class="h-64">
+    <canvas id="projectStatusChart"></canvas>
+  </div>
+</div>
+
+<script>
+  // Project Status Chart
+  const ctx = document.getElementById('projectStatusChart').getContext('2d');
+  
+  // Sample data - in a real app, this would come from the backend
+  const projectData = {
+    labels: ['On Track', 'At Risk', 'Overdue', 'Completed'],
+    datasets: [{
+      label: 'Projects',
+      data: [
+        {{ project_count - (overdue_projects|length) }}, 
+        {{ (project_count // 4) }}, 
+        {{ overdue_projects|length }}, 
+        {{ (project_count // 3) }}
+      ],
+      backgroundColor: [
+        'rgba(34, 197, 94, 0.8)',   // Green
+        'rgba(251, 191, 36, 0.8)',  // Yellow
+        'rgba(239, 68, 68, 0.8)',   // Red
+        'rgba(59, 130, 246, 0.8)'   // Blue
+      ],
+      borderColor: [
+        'rgba(34, 197, 94, 1)',
+        'rgba(251, 191, 36, 1)',
+        'rgba(239, 68, 68, 1)',
+        'rgba(59, 130, 246, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: projectData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}
