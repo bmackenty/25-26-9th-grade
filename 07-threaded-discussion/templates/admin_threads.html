@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Threads - Admin Dashboard{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white rounded-lg shadow-md mb-8">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-semibold text-gray-800">Manage Threads</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Threads Table -->
+<div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800">All Threads</h2>
+    </div>
+    
+    {% if threads %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thread</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Replies</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for thread in threads %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        {% if thread.is_pinned %}📌{% endif %}
+                                        {% if thread.is_locked %}🔒{% endif %}
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            <a href="{{ url_for('view_thread', thread_id=thread.id) }}" class="hover:text-blue-600">
+                                                {{ thread.title[:50] }}{% if thread.title|length > 50 %}...{% endif %}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ thread.username }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ thread.category_name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ thread.reply_count }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ thread.created_at.split(' ')[0] }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-2">
+                                    {% if thread.is_pinned %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Pinned
+                                        </span>
+                                    {% endif %}
+                                    {% if thread.is_locked %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Locked
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <!-- Pin/Unpin Button -->
+                                    <button onclick="togglePin({{ thread.id }})" 
+                                            class="{% if thread.is_pinned %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-gray-600 hover:bg-gray-700{% endif %} text-white px-3 py-1 rounded text-xs transition-colors">
+                                        {% if thread.is_pinned %}Unpin{% else %}Pin{% endif %}
+                                    </button>
+                                    
+                                    <!-- Lock/Unlock Button -->
+                                    <button onclick="toggleLock({{ thread.id }})" 
+                                            class="{% if thread.is_locked %}bg-red-600 hover:bg-red-700{% else %}bg-gray-600 hover:bg-gray-700{% endif %} text-white px-3 py-1 rounded text-xs transition-colors">
+                                        {% if thread.is_locked %}Unlock{% else %}Lock{% endif %}
+                                    </button>
+                                    
+                                    <!-- Delete Button -->
+                                    <button onclick="deleteThread({{ thread.id }}, '{{ thread.title }}')" 
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs transition-colors">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="p-12 text-center">
+            <div class="text-gray-400 mb-4">
+                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No threads found</h3>
+            <p class="text-gray-500">There are no threads to manage yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Thread</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Are you sure you want to delete "<span id="threadTitle" class="font-medium"></span>"?
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    This action cannot be undone and will delete all replies and attachments.
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form id="deleteForm" method="POST" class="flex justify-center space-x-4">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePin(threadId) {
+    fetch(`/admin/thread/${threadId}/toggle_pin`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function toggleLock(threadId) {
+    fetch(`/admin/thread/${threadId}/toggle_lock`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function deleteThread(threadId, threadTitle) {
+    document.getElementById('threadTitle').textContent = threadTitle;
+    document.getElementById('deleteForm').action = `/admin/thread/${threadId}/delete`;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Thread - Threaded Discussion Board{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Create New Thread</h2>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Thread Title *</label>
+                <input type="text" id="title" name="title" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Enter a descriptive title for your thread">
+            </div>
+            
+            <!-- Category -->
+            <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                <select id="category_id" name="category_id" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select a category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Content -->
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Thread Content *</label>
+                <textarea id="content" name="content" rows="8" required
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Write your thread content here..."></textarea>
+                <p class="mt-1 text-sm text-gray-500">You can use basic formatting and include links.</p>
+            </div>
+            
+            <!-- File Attachments -->
+            <div>
+                <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Attachments (Optional)</label>
+                <input type="file" id="attachments" name="attachments" multiple
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       accept=".txt,.pdf,.png,.jpg,.jpeg,.gif,.doc,.docx">
+                <p class="mt-1 text-sm text-gray-500">
+                    Supported formats: TXT, PDF, PNG, JPG, GIF, DOC, DOCX. Maximum file size: 10MB per file.
+                </p>
+            </div>
+            
+            <!-- Thread Guidelines -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-blue-800 mb-2">Thread Guidelines</h3>
+                <ul class="text-sm text-blue-700 space-y-1">
+                    <li>• Be respectful and constructive in your discussions</li>
+                    <li>• Use clear, descriptive titles that summarize your topic</li>
+                    <li>• Choose the most appropriate category for your thread</li>
+                    <li>• Provide enough context for others to understand and respond</li>
+                    <li>• Attach relevant files when helpful to the discussion</li>
+                </ul>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 pt-4">
+                <a href="{{ url_for('index') }}" 
+                   class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
+                    Create Thread
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
