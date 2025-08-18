@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Todo - Todo Manager{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md p-6">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-900">Add New Todo</h2>
+    <p class="text-gray-600">Create a new task with details, category, tags, and due date.</p>
+  </div>
+
+  {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="POST" class="space-y-6">
+    <!-- Title -->
+    <div>
+      <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+        Title <span class="text-red-500">*</span>
+      </label>
+      <input type="text" 
+             id="title" 
+             name="title" 
+             required
+             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+             placeholder="Enter todo title">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+        Description
+      </label>
+      <textarea id="description" 
+                name="description" 
+                rows="3"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter todo description (optional)"></textarea>
+    </div>
+
+    <!-- Category and Priority Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Category -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+          Category
+        </label>
+        <select id="category" 
+                name="category"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+          <option value="General">General</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="School">School</option>
+          <option value="Health">Health</option>
+          <option value="Finance">Finance</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Home">Home</option>
+        </select>
+      </div>
+
+      <!-- Priority -->
+      <div>
+        <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">
+          Priority
+        </label>
+        <select id="priority" 
+                name="priority"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tags and Due Date Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Tags -->
+      <div>
+        <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
+          Tags
+        </label>
+        <input type="text" 
+               id="tags" 
+               name="tags" 
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+               placeholder="Enter tags separated by commas">
+        <p class="text-xs text-gray-500 mt-1">Example: urgent, project, meeting</p>
+      </div>
+
+      <!-- Due Date -->
+      <div>
+        <label for="due_date" class="block text-sm font-medium text-gray-700 mb-2">
+          Due Date
+        </label>
+        <input type="date" 
+               id="due_date" 
+               name="due_date" 
+               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+      <a href="{{ url_for('index') }}" 
+         class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        Cancel
+      </a>
+      <button type="submit" 
+              class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        Create Todo
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Set minimum date to today
+  document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('due_date').min = today;
+  });
+</script>
+{% endblock %}

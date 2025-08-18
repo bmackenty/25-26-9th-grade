@@ -1,0 +1,35 @@
+<nav class="bg-white shadow-lg mb-8">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="flex justify-between items-center py-4">
+      <!-- Logo/Brand -->
+      <div class="flex items-center">
+        <a href="{{ url_for('index') }}" class="text-xl font-bold text-green-600 hover:text-green-800">
+          📝 Todo Manager
+        </a>
+      </div>
+      
+      <!-- Navigation Links -->
+      <div class="hidden md:flex space-x-8">
+        <a href="{{ url_for('index') }}" 
+           class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium 
+                  {% if request.endpoint == 'index' %}bg-green-100 text-green-700{% endif %}">
+          Home
+        </a>
+        <a href="{{ url_for('create') }}" 
+           class="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium
+                  {% if request.endpoint == 'create' %}bg-green-100 text-green-700{% endif %}">
+          Add Todo
+        </a>
+      </div>
+      
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button type="button" class="text-gray-700 hover:text-green-600 focus:outline-none focus:text-green-600">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
