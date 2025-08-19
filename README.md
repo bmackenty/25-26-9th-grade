@@ -40,7 +40,7 @@ A simple item management system where users can:
 - Form processing and validation
 - Basic user interface with Tailwind CSS
 
-### Setup Instructions
+### Setup Instructions (for all projects)
 ```bash
 cd 01-crud-app
 python3 -m venv venv
@@ -51,33 +51,7 @@ python app.py
 
 Open http://127.0.0.1:5000/ in your browser
 
-## 🎫 Project 2: Help Desk System
 
-**Difficulty Level**: Intermediate  
-**Concepts Covered**: Advanced Flask, user roles, complex database relationships
-
-### What You'll Build
-A help desk ticket management system where:
-- Users can submit support tickets
-- Support agents can manage and respond to tickets
-- Admins can oversee the entire system
-- Tickets have statuses, priorities, and categories
-
-### Key Learning Points
-- User authentication and authorization
-- Role-based access control
-- Complex database relationships
-- Advanced Jinja templating
-- Form validation and error handling
-
-### Setup Instructions
-```bash
-cd 02-helpdesk-system
-python3 -m venv venv
-source venv/bin/activate          # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
 
 ## 🔧 Technical Stack
 
@@ -96,60 +70,16 @@ python app.py
 - **GitHub**: Code hosting and collaboration
 - **Virtual Environments**: Python dependency management
 
-## 📚 Learning Progression
-
-### Week 1-2: CRUD Application
-- Set up development environment
-- Learn Flask basics and routing
-- Understand Jinja templating
-- Build basic database operations
-
-### Week 3-4: Help Desk System
-- Implement user authentication
-- Design complex database schemas
-- Create role-based permissions
-- Build advanced user interfaces
-
-### Week 5-6: Advanced Features
-- Add search and filtering
-- Implement email notifications
-- Create admin dashboards
-- Add data visualization
-
-## 🛠️ Development Setup
-
-### Prerequisites
-- Python 3.8 or higher
-- Git
-- A code editor (VS Code recommended)
-
-### First Time Setup
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/25-26-9th-grade.git
-cd 25-26-9th-grade
-
-# Set up the first project
-cd 01-crud-app
-python3 -m venv venv
-source venv/bin/activate          # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
 
 ### Daily Development Workflow
 ```bash
 # Activate virtual environment
 source venv/bin/activate          # On Windows: venv\Scripts\activate
 
-# Make your changes to the code
+# Make your changes to the code, save your changes
 # Test your application
 python app.py
 
-# When ready to save changes
-git add .
-git commit -m "Description of your changes"
-git push origin main
 ```
 
 ## 📖 Code Organization
@@ -227,6 +157,4 @@ If you get stuck:
 - **Experiment**: Try changing things to see what happens
 - **Have fun**: Web development is creative and rewarding!
 
----
 
-**Happy Coding! 🚀**
