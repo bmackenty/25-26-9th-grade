@@ -1,8 +1,7 @@
 # Flask Learning Projects for 9th Grade Students
 
-A collection of Flask web applications designed to teach students web development fundamentals through hands-on projects. Each project builds upon the previous one, introducing new concepts and techniques.
-
-## 🎯 Learning Objectives
+A collection of Flask web applications designed to teach students web development fundamentals through hands-on projects. The projects are templates designed to be modified for a real-world problems. 
+##  Learning Objectives
 
 Students will learn:
 - **Flask Framework**: Routing, request handling, and response generation
@@ -11,17 +10,17 @@ Students will learn:
 - **User Authentication**: Login systems and session management
 - **Modern Web Development**: HTML forms, CSS styling, and JavaScript interactivity
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 25-26-9th-grade/
 ├── 01-crud-app/              # Basic CRUD operations
 ├── 02-helpdesk-system/       # Help desk ticket management
-├── 03-blog-system/           # Blog with user posts (future)
+├── 03-blog-system/           # Blog with user posts etc....
 └── README.md                 # This file
 ```
 
-## 🚀 Project 1: CRUD Application
+## Project 1: CRUD Application
 
 **Difficulty Level**: Beginner  
 **Concepts Covered**: Basic Flask, Jinja templating, SQLite CRUD operations
