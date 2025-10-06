@@ -1,0 +1,47 @@
+
+<div>
+  <label class="block text-sm mb-1">Name</label>
+  <input name="name" class="w-full border rounded p-2"
+         value="{{ (form.name if form else (item.name if item else '')) }}" required>
+</div>
+
+<div>
+  <label class="block text-sm mb-1">Description</label>
+  <textarea name="description" rows="4" class="w-full border rounded p-2">{{ (form.description if form else (item.description if item else '')) }}</textarea>
+</div>
+
+<div>
+  <span class="block text-sm mb-1">Status</span>
+  {% set current_status = (form.status if form else (item.status if item else 'active')) %}
+  <label class="mr-4 inline-flex items-center gap-2">
+    <input type="radio" name="status" value="active" {% if current_status == 'active' %}checked{% endif %}>
+    <span>Active</span>
+  </label>
+  <label class="inline-flex items-center gap-2">
+    <input type="radio" name="status" value="archived" {% if current_status == 'archived' %}checked{% endif %}>
+    <span>Archived</span>
+  </label>
+</div>
+
+<div>
+  <label class="block text-sm mb-1">Category</label>
+  {% set current_category = (form.category_id if form else (item.category_id if item else ''))|string %}
+  <select name="category_id" class="w-full border rounded p-2" required>
+    <option value="">Choose a category</option>
+    {% for c in categories %}
+      <option value="{{ c.id }}" {% if c.id|string == current_category %}selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<div>
+  <span class="block text-sm mb-1">Tags (choose any)</span>
+  {% set selected = (form.getlist('tags') if form else (item_tag_ids|list if item_tag_ids is defined else [])) %}
+  {% for t in tags %}
+    {% set checked = (t.id|string in selected|string) or (t.id in selected) %}
+    <label class="mr-3 inline-flex items-center gap-2 mb-2">
+      <input type="checkbox" name="tags" value="{{ t.id }}" {% if checked %}checked{% endif %}>
+      <span>{{ t.name }}</span>
+    </label>
+  {% endfor %}
+</div>

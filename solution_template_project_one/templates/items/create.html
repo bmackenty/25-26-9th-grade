@@ -1,0 +1,10 @@
+
+{% extends "base.html" %}
+{% block title %}Create Item{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Create Item</h1>
+<form method="post" class="space-y-4 max-w-2xl">
+  {% include "partials/item_form_fields.html" %}
+  <button class="px-4 py-2 bg-green-600 text-white rounded">Create</button>
+</form>
+{% endblock %}

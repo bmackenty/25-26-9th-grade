@@ -1,0 +1,10 @@
+# =====================================================
+# requirements.txt
+# This file tells Python which packages to install.
+# Students: You don't edit this often — just run:
+#   pip install -r requirements.txt
+# =====================================================
+
+# Flask is the main web framework we are using.
+# It lets us build web apps with routes, templates, and databases.
+Flask>=3.0

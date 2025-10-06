@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+{% block title %}Items{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold">Your Items</h1>
+  <a href="{{ url_for('items_create') }}" class="px-3 py-2 bg-blue-600 text-white rounded">+ New Item</a>
+</div>
+
+<form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search name..." class="border rounded p-2">
+  <select name="category_id" class="border rounded p-2">
+    <option value="">All Categories</option>
+    {% for c in categories %}
+      <option value="{{ c.id }}" {% if category_id and c.id|string == category_id %}selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="tag_id" class="border rounded p-2">
+    <option value="">All Tags</option>
+    {% for t in tags %}
+      <option value="{{ t.id }}" {% if tag_id and t.id|string == tag_id %}selected{% endif %}>{{ t.name }}</option>
+    {% endfor %}
+  </select>
+  <button class="border rounded p-2">Filter</button>
+</form>
+
+<div class="space-y-3">
+  {% for i in items %}
+    <div class="bg-white border rounded p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-semibold">{{ i.name }}</div>
+          <div class="text-sm text-gray-600">Category: {{ i.category_name }} • Status: {{ i.status }}</div>
+          {% if i.description %}
+            <p class="mt-2 text-sm text-gray-800">{{ i.description }}</p>
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="{{ url_for('items_edit', item_id=i.id) }}" class="px-2 py-1 border rounded">Edit</a>
+          <form method="post" action="{{ url_for('items_delete', item_id=i.id) }}" onsubmit="return confirm('Delete this item?');">
+            <button class="px-2 py-1 border rounded text-red-600">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p>No items yet. <a class="underline" href="{{ url_for('items_create') }}">Create one</a>.</p>
+  {% endfor %}
+</div>
+{% endblock %}
