@@ -1,0 +1,137 @@
+# HOWTO: Editing Data from a Database
+
+*For beginner programmers (students)*  
+*Project Context: Python (Flask) web projects or similar*
+
+---
+
+## Overview
+
+This guide will teach you:
+- How to edit (update) information that's already saved in your project database
+
+The examples use Python Flask and SQLite, but you can apply the same ideas to other programming languages and database systems.
+
+---
+
+## Step 1: Show Existing Data to Users
+
+First, you'll want to show the data so users can select what they want to edit.  
+For example, you might have a list of users with an "Edit" button next to each one.
+
+**Example: HTML Table with Edit Buttons**
+```html
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Favorite Color</th>
+    <th>Edit</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user['username'] }}</td>
+    <td>{{ user['age'] }}</td>
+    <td>{{ user['favorite_color'] }}</td>
+    <td>
+      <a href="/edit/{{ user['id'] }}">Edit</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+```
+*Here, "users" is a list of database records displayed on the page.*
+
+---
+
+## Step 2: Create an Edit Form with Existing Data
+
+When a user clicks "Edit", show a form filled in with the current values so they can change them.
+
+**Example: Flask Route and Form**
+```python
+@app.route('/edit/<int:user_id>')
+def edit(user_id):
+    # Load existing user data from the database
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    return render_template('edit_form.html', user=user)
+```
+
+**Example: edit_form.html**
+```html
+<form method="POST" action="/update/{{ user['id'] }}">
+  <label for="username">Name:</label>
+  <input type="text" id="username" name="username" value="{{ user['username'] }}">
+
+  <label for="age">Age:</label>
+  <input type="number" id="age" name="age" value="{{ user['age'] }}">
+
+  <label for="favorite_color">Favorite Color:</label>
+  <input type="text" id="favorite_color" name="favorite_color" value="{{ user['favorite_color'] }}">
+
+  <input type="submit" value="Update">
+</form>
+```
+
+---
+
+## Step 3: Update the Data in Your Database
+
+When the user submits the "Update" form, your code should save their changes back to the database.
+
+**Example Flask Route for Updating**
+```python
+@app.route('/update/<int:user_id>', methods=['POST'])
+def update(user_id):
+    username = request.form['username']
+    age = request.form['age']
+    favorite_color = request.form['favorite_color']
+
+    conn = get_db_connection()
+    conn.execute(
+        'UPDATE users SET username = ?, age = ?, favorite_color = ? WHERE id = ?',
+        (username, age, favorite_color, user_id)
+    )
+    conn.commit()
+    conn.close()
+    return 'Update successful!'
+```
+
+**Tips:**
+- Use an `UPDATE` SQL statement to change info in the database.
+- Target the correct record using an identifier (like `id`).
+
+---
+
+## Step 4: Check Your Changes
+
+After updating, check the database (or refresh your page) to make sure the changes went through.
+
+---
+
+## Step 5: Try Editing Other Data Types
+
+You can use the same method for editing:
+- Text or numbers
+- Dropdowns (`<select>`) and checkboxes
+- Passwords and emails
+
+Just pre-fill the form values and update the database with the new info when the form is submitted.
+
+---
+
+## Summary
+
+- Display current data for users
+- Show forms pre-filled with existing data
+- Update the database when users submit changes
+
+**Practice:**  
+Try adding an edit feature for your favorite book, song, or movie project.  
+Let the user update the title, author, or other details!
+
+---
+
+*If you need help, ask your teacher or review your project’s code samples!*
