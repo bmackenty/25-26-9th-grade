@@ -1,0 +1,104 @@
+# HOWTO: Display Data from a Database on a Web Page
+
+*For beginner programmers (students)*  
+*Example uses Python Flask and SQLite*
+
+---
+
+## Overview
+
+This guide will help you:
+- Fetch (read) data from a database
+- Show that data in a table or list on a web page
+
+---
+
+## Step 1: Get Data Out of the Database
+
+Suppose your database has a table called `users`.
+
+**Python Example:**
+
+```python
+import sqlite3
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/users')
+def show_users():
+    conn = get_db_connection()
+    users = conn.execute('SELECT * FROM users').fetchall()
+    conn.close()
+    return render_template('users.html', users=users)
+```
+
+---
+
+## Step 2: Make a Web Page to Show the Data
+
+Create an HTML file where the data will be displayed.  
+Here you'll loop over the data and print each item in a table or list.
+
+**Example: `users.html`**
+
+```html
+<h2>User List</h2>
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Favorite Color</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user['username'] }}</td>
+    <td>{{ user['age'] }}</td>
+    <td>{{ user['favorite_color'] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+```
+
+**Tips:**  
+- `users` comes from your Python code.  
+- Inside `{% for user in users %}` ... `{% endfor %}` you repeat elements for every user.
+
+---
+
+## Step 3: View Your Web Page
+
+Start your Flask app and go to `/users` in your browser.  
+You’ll see the table filled with data from your database!
+
+---
+
+## Extra: Display Lists, Cards, or Anything!
+
+You don't need a table! You can show lists, cards, or anything:
+```html
+<ul>
+  {% for user in users %}
+    <li>{{ user['username'] }} ({{ user['age'] }}): {{ user['favorite_color'] }}</li>
+  {% endfor %}
+</ul>
+```
+
+---
+
+## Summary
+
+1. Use Python to read data from the database.
+2. Pass that data to your HTML file using `render_template`.
+3. Use a loop in your HTML to show each item.
+
+---
+
+**Practice:**  
+Try displaying books, songs, or your own favorite things!
+
+---
+
+*If you need help, ask your teacher or look at your project’s sample files!*
