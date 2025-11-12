@@ -1,0 +1,120 @@
+# HOWTO: Use APIs to Get Data from Other Websites
+
+*For beginner programmers (students)*  
+*Example language: Python*
+
+---
+
+## What is an API?
+
+An **API** (Application Programming Interface) lets your program talk to another website or app and get data (such as weather, news, or jokes).  
+Example: Your program gets today’s weather from a weather API instead of typing it yourself.
+
+---
+
+## Step 1: Find an API
+
+Choose a website that offers an API.  
+Look for “API documentation” or “developers” section on a site you like.
+
+Example public APIs (no login required):
+- [OpenWeather](https://openweathermap.org/api) (weather info)
+- [Cat Facts](https://catfact.ninja/) (fun cat facts)
+- [JokeAPI](https://v2.jokeapi.dev/) (funny jokes)
+- [PokeAPI](https://pokeapi.co/) (Pokémon info)
+
+---
+
+## Step 2: Check How to Use the API
+
+- See what kind of info it gives you (read the docs).
+- Find out the URL you use to get data.
+- Many APIs use URLs like this:  
+  `https://api.example.com/data`
+- Some APIs need an **API key** (like a password). For now, use one that doesn’t, or ask your teacher how to get a key.
+
+---
+
+## Step 3: Get Data from the API (Python Example)
+
+Let’s use **Cat Facts** as an example.
+
+### 1. Import the requests library
+
+```python
+import requests
+```
+
+### 2. Use requests to get data
+
+```python
+response = requests.get("https://catfact.ninja/fact")
+```
+
+### 3. Check the result (called JSON)
+
+```python
+data = response.json()
+print(data)
+```
+
+**You’ll see something like:**  
+```python
+{'fact': 'Cats sleep 70% of their lives.', 'length': 29}
+```
+
+### 4. Use the data in your program
+
+```python
+print("Did you know?")
+print(data['fact'])  # shows just the cat fact!
+```
+
+---
+
+## Step 4: Try a Different API
+
+Change the URL to use other APIs.  
+For example, get a joke:
+
+```python
+response = requests.get("https://v2.jokeapi.dev/joke/Any?type=single")
+data = response.json()
+print(data['joke'])  # shows a joke
+```
+
+---
+
+## Step 5: Handle Errors
+
+Sometimes things go wrong (like network problems or a broken URL).  
+Add a check:
+
+```python
+if response.status_code == 200:
+    data = response.json()
+    print(data['fact'])
+else:
+    print("Oops! Something went wrong.")
+```
+
+---
+
+## Step 6: Practice and Explore
+
+Try:
+- Showing five cat facts
+- Getting weather from [OpenWeather](https://openweathermap.org/api)
+- Printing three Pokémon names from [PokeAPI](https://pokeapi.co/)
+
+---
+
+## Summary
+
+- APIs help you get data from other websites automatically.
+- Use the requests library in Python to ask for data and use `.json()` to handle the answer.
+- Practice with different APIs and uses.
+
+---
+
+*If you need help, ask your teacher or look at your project's code samples!*
