@@ -1,0 +1,95 @@
+# HOWTO: Basic Styling with Tailwind CSS
+
+*For beginner programmers (students)*  
+*Tailwind CSS is a popular way to style websites quickly and easily!*
+
+---
+
+## What is Tailwind CSS?
+
+Tailwind CSS is a tool (“framework”) for making web pages look good.  
+It uses short **classes** in your HTML code to control colors, sizes, spacing, and much more—without writing separate CSS files!
+
+---
+
+## Step 1: Make Sure Tailwind is Installed
+
+Ask your teacher if Tailwind is already set up, or follow [Tailwind Installation](https://tailwindcss.com/docs/installation).
+
+For beginner projects, you might see a line like this in your HTML:
+
+```html
+<link href="https://cdn.tailwindcss.com" rel="stylesheet">
+```
+
+This makes Tailwind available for you!
+
+---
+
+## Step 2: Style Elements with Tailwind Classes
+
+In your HTML, add classes like `bg-blue-500`, `text-white`, `p-4`.
+
+**Example: Styling a Button**
+
+```html
+<button class="bg-blue-500 text-white p-2 rounded">
+  Click Me
+</button>
+```
+
+**What do the classes mean?**
+- `bg-blue-500`: Background color = blue
+- `text-white`: Text color = white
+- `p-2`: Padding (space inside the button)
+- `rounded`: Rounded corners
+
+---
+
+## Step 3: Common Tailwind Classes
+
+- **Colors:**  
+  `bg-red-500`, `bg-green-200`, `text-gray-900`, `border-blue-300`
+- **Spacing:**  
+  `p-4` (padding), `m-2` (margin), `px-6` (padding left/right), `py-2` (padding top/bottom)
+- **Size:**  
+  `w-1/2` (width half), `h-10` (height)
+- **Borders/Rounding:**  
+  `border`, `border-2`, `rounded`, `rounded-lg`
+- **Text / Font:**  
+  `text-xl` (extra large), `font-bold`
+- **Flex / Grid:**  
+  `flex`, `items-center`, `justify-between`, `grid`, `gap-4`
+
+---
+
+## Step 4: Example: Making a Card
+
+```html
+<div class="bg-white shadow-lg p-6 rounded-lg w-64">
+  <h2 class="text-xl font-bold mb-2">Student Project</h2>
+  <p class="text-gray-700">This is a simple card using Tailwind.</p>
+  <button class="bg-green-500 px-4 py-2 text-white rounded mt-4">Go!</button>
+</div>
+```
+
+---
+
+## Step 5: Try It Out!
+
+- Change colors (use different `bg-...` classes)
+- Adjust padding/margin (`p-8`, `m-4`)
+- Make images rounded (`class="rounded-full"`)
+- Use layout classes like `flex`, `items-center`, `justify-center`
+
+---
+
+## Summary
+
+- Tailwind lets you style HTML by adding simple class names
+- You can quickly change colors, spacing, and layout
+- Practice by building a colorful button or card!
+
+---
+
+*Need help? Use the [Tailwind Docs](https://tailwindcss.com/docs) or ask your teacher!*
