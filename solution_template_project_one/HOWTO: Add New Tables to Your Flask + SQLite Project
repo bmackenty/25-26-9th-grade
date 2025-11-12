@@ -1,0 +1,107 @@
+# HOWTO: Add New Tables to Your Flask + SQLite Project
+
+This guide walks you through adding a new database table to your project — for example, a table for `projects`, `tasks`, or anything else you can imagine!
+
+---
+
+## 1. Plan Your Table
+
+Decide what data your new table should store.
+- Each row = one thing/object/entity.
+- Each column = one property (name, description, date, etc).
+
+**Example:** For a "projects" table, you might want:
+- `id` (unique identifier, primary key)
+- `name` (name of the project, text)
+- `description` (details about the project, text, optional)
+- `created_at` (timestamp)
+
+---
+
+## 2. Edit `schema.sql`
+
+Open `schema.sql` in your project folder.
+
+Add your new table using standard SQL.  
+Put it at the end of the file or wherever makes sense.
+
+Example — add this for a "projects" table:
+```sql
+CREATE TABLE projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+- If you want your table to be linked to another table (like connecting a project to a user), use a FOREIGN KEY.  
+  See other tables in `schema.sql` for examples.
+
+---
+
+## 3. Save and Re-Initialize the Database
+
+Whenever you change `schema.sql`, you need to **reset** your database:
+
+1. **Delete the existing database file:**
+   - Go to `/db/` in your project folder
+   - Delete `app.db` (it’s safe, but you lose all stored data!)
+
+2. **Rebuild the database:**
+   - In your terminal, run:
+     ```bash
+     python app.py --init-db
+     ```
+   - This creates a fresh database with your new table.
+
+---
+
+## 4. Use Your New Table!
+
+You can now use your table in your Flask app.
+
+**Example Insert:**
+```python
+db = get_db()
+db.execute("INSERT INTO projects (name, description) VALUES (?, ?)", ("My Project", "Details"))
+db.commit()
+```
+
+**Remember:**  
+- You'll need to write views, routes, or templates to display or edit your new data, just like with "items".
+
+---
+
+## 5. Tips
+
+- Adding columns later? Update `schema.sql` and re-initialize!
+- Want to connect tables? Look at examples in `schema.sql` (see `FOREIGN KEY` syntax).
+- SQL documentation is your friend! [SQL CREATE TABLE](https://www.w3schools.com/sql/sql_create_table.asp)
+
+---
+
+## 6. Sample Table Snippets
+
+**Simple Table:**
+```sql
+CREATE TABLE notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+**Table Linked to Users:**
+```sql
+CREATE TABLE projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    owner_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+---
+
+Happy coding!
