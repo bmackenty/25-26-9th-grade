@@ -1,0 +1,166 @@
+# HOWTO: Adding Input Fields and Saving Data to a Database
+
+*For beginner programmers (students)*  
+*Project Context: Python (Flask) web projects or similar*
+
+---
+
+## Overview
+
+This guide will walk you through:
+- Adding different input fields to a web form (like text, number, and dropdown)
+- Saving the user's input from the form into a database
+
+The instructions use Python Flask as the example framework, but the ideas work in other languages and frameworks too.
+
+---
+
+## Step 1: Add Input Fields to Your HTML Form
+
+Your form is a section of HTML code where users type things in.  
+Different input fields collect different kinds of information.
+
+**Example HTML form:**
+
+```html
+<form method="POST" action="/save">
+  <!-- Text input (for names, etc.) -->
+  <label for="username">Name:</label>
+  <input type="text" id="username" name="username">
+
+  <!-- Number input (for age, etc.) -->
+  <label for="age">Age:</label>
+  <input type="number" id="age" name="age">
+
+  <!-- Dropdown menu -->
+  <label for="favorite_color">Favorite Color:</label>
+  <select id="favorite_color" name="favorite_color">
+    <option value="red">Red</option>
+    <option value="green">Green</option>
+    <option value="blue">Blue</option>
+  </select>
+
+  <input type="submit" value="Submit">
+</form>
+```
+
+**Tips:**
+- Use `<input type="text">` for text (words, names).
+- Use `<input type="number">` for numbers (age, score).
+- Use `<select>...</select>` for dropdown lists.
+- Give each field a unique `name` — you'll use this name later in your code!
+
+---
+
+## Step 2: Collect Input Data in Your Program
+
+When your user presses **Submit**, their answers get sent to your web server.
+
+In Flask (Python), you collect their answers like this:
+
+```python
+from flask import request
+
+@app.route('/save', methods=['POST'])
+def save():
+    username = request.form['username']        # text field
+    age = request.form['age']                  # number field
+    favorite_color = request.form['favorite_color']  # dropdown
+    ...
+```
+
+Each field's data is accessed by its name (from the HTML).
+
+---
+
+## Step 3: Save User Data to a Database
+
+Most web projects use a database to store information.
+
+**Example: Saving data using SQLite in Flask:**
+
+First, set up your database (using SQLite):
+
+```python
+import sqlite3
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+```
+
+Save data inside your `/save` route:
+
+```python
+@app.route('/save', methods=['POST'])
+def save():
+    # Collect input fields
+    username = request.form['username']
+    age = request.form['age']
+    favorite_color = request.form['favorite_color']
+
+    # Save to database
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO users (username, age, favorite_color) VALUES (?, ?, ?)',
+        (username, age, favorite_color)
+    )
+    conn.commit()
+    conn.close()
+    return 'Data saved!'
+```
+
+**Tips:**
+- Make sure your database has a table called `users` with the columns you need (`username`, `age`, `favorite_color`).
+- You can create the table by running this *once* (for setup):
+
+```python
+conn = get_db_connection()
+conn.execute(
+    '''
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        favorite_color TEXT NOT NULL
+    )
+    '''
+)
+conn.close()
+```
+
+---
+
+## Step 4: Test It Out!
+
+1. Run your project and open your web page.
+2. Fill out the form and submit.
+3. Check that the information appears in your database.
+
+---
+
+## Step 5: Try Adding Other Field Types
+
+Explore other input fields you might need:
+- `<input type="email">`
+- `<input type="password">`
+- `<input type="date">`
+- Radio buttons (`<input type="radio">`)
+- Checkboxes (`<input type="checkbox">`)
+
+Each can be collected and saved the same way!
+
+---
+
+## Summary
+
+- Add new fields to your HTML form.
+- Collect data from `request.form` in your program.
+- Save the data into your database.
+
+**Practice**: Try building a form for your favorite book, song, or movie, with different field types, and save that to your database!
+
+---
+
+*If you need help, ask your teacher or check the project examples!*  
