@@ -3,13 +3,20 @@
 Stabilize Flask environment for solution_template_project_one
 """
 
-import os, sys, subprocess, shutil, json
+import os, sys, subprocess, shutil, json, urllib.request
 from textwrap import dedent
 
 EXPECTED_FOLDER = "solution_template_project_one"
 VENV_DIR = "venv"
 REQUIREMENTS_FILE = "requirements.txt"
 PROJECT_MARKERS = ["app.py"]
+
+# Versioning
+LOCAL_VERSION = "2025.11.21-1"
+GITHUB_RAW_URL = (
+    "https://raw.githubusercontent.com/"
+    "bmackenty/25-26-9th-grade/main/solution_template_project_one/stabilize.py"
+)
 
 
 # ------------ Helpers -------------
@@ -25,6 +32,34 @@ def run(cmd):
         print(result.stdout)
         fail(f"Command failed: {' '.join(cmd)}")
     return result.stdout.strip()
+
+
+# ------------ Version check -------------
+
+def get_remote_version():
+    try:
+        with urllib.request.urlopen(GITHUB_RAW_URL, timeout=2) as r:
+            text = r.read().decode("utf-8", "ignore")
+        for line in text.splitlines():
+            if line.strip().startswith("LOCAL_VERSION"):
+                # Expect: LOCAL_VERSION = "2025.11.21-1"
+                parts = line.split("=", 1)
+                if len(parts) == 2:
+                    return parts[1].strip().strip('"').strip("'")
+    except Exception:
+        return None
+    return None
+
+
+def check_version():
+    remote = get_remote_version()
+    if not remote:
+        print(f"• stabilize.py version {LOCAL_VERSION} (GitHub check skipped)")
+    elif remote == LOCAL_VERSION:
+        print(f"✓ stabilize.py up to date ({LOCAL_VERSION})")
+    else:
+        print(f"[!] stabilize.py outdated (local {LOCAL_VERSION}, GitHub {remote})")
+        print("    Get latest from: https://github.com/bmackenty/25-26-9th-grade")
 
 
 # ------------ Checks -------------
@@ -109,6 +144,7 @@ def set_vscode(vpy):
 def main():
     check_folder()
     check_files()
+    check_version()
     py = find_python()
     make_venv(py)
     vpy = venv_python()
@@ -123,7 +159,7 @@ def main():
         python3 app.py
 
       If anything breaks:
-        python3 stabilize_env.py
+        python3 stabilize.py
     """).strip())
 
 
