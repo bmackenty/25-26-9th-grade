@@ -120,7 +120,7 @@ def main():
     print(dedent("""
       To start:
         source venv/bin/activate
-        python app.py
+        python3 app.py
 
       If anything breaks:
         python3 stabilize_env.py
