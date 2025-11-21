@@ -2,9 +2,9 @@
 """
 stabilize_env.py
 
-This script MUST be run from:
+Run this from inside the project folder:
 
-    25-26-9th-grade/solution_template_project_one/
+    .../solution_template_project_one/
 
 It will:
 - Confirm you are in the correct folder.
@@ -24,10 +24,10 @@ import shutil
 import json
 from textwrap import dedent
 
-# REQUIRED PROJECT PATH ENDING
-REQUIRED_PATH_SUFFIX = os.path.join("25-26-9th-grade", "solution_template_project_one")
+# We only care that the current folder is this:
+EXPECTED_FOLDER_NAME = "solution_template_project_one"
 
-# FILES THAT MUST EXIST IN THE CORRECT FOLDER
+# Files that must exist in the project
 PROJECT_MARKERS = ["app.py"]
 
 VENV_DIR = "venv"
@@ -89,18 +89,19 @@ def is_running_in_vscode() -> bool:
 
 def enforce_correct_directory() -> None:
     """
-    Ensure this script is being run from:
-    25-26-9th-grade/solution_template_project_one
+    Ensure this script is being run from a folder named:
+        solution_template_project_one
     """
     print_header("Checking current working directory")
 
     cwd = os.getcwd()
     normalized = os.path.normpath(cwd)
+    folder_name = os.path.basename(normalized)
 
-    if not normalized.endswith(REQUIRED_PATH_SUFFIX):
+    if folder_name != EXPECTED_FOLDER_NAME:
         print("You are NOT in the correct folder.\n")
-        print("This script MUST be run from a folder ending in:")
-        print(f"  {REQUIRED_PATH_SUFFIX}\n")
+        print(f"This script MUST be run from a folder named:")
+        print(f"  {EXPECTED_FOLDER_NAME}\n")
         print("Your current folder is:")
         print(f"  {cwd}\n")
 
@@ -108,17 +109,18 @@ def enforce_correct_directory() -> None:
             print("It looks like you are using VS Code.")
             print("In VS Code, do this:")
             print("  1. File → Open Folder…")
-            print("  2. Choose the folder: 25-26-9th-grade")
+            print("  2. Choose the folder that contains:")
+            print("         solution_template_project_one")
             print("  3. Then open: solution_template_project_one")
             print("  4. Open a terminal (View → Terminal).")
             print("  5. Run: python3 stabilize_env.py\n")
         else:
             print("In your terminal, you should run something like:")
-            print("  cd 25-26-9th-grade/solution_template_project_one\n")
+            print("  cd path/to/solution_template_project_one\n")
 
         fail("You are in the wrong directory.")
     else:
-        print("Good: You are in the correct project directory.")
+        print(f"Good: You are in the '{EXPECTED_FOLDER_NAME}' project directory.")
 
 
 def check_project_files() -> None:
@@ -270,14 +272,14 @@ def print_final_instructions() -> None:
     From now on, when you start work:
 
         1. Open VS Code.
-        2. Use File → Open Folder… and open:
-               25-26-9th-grade
-           then:
-               solution_template_project_one
-        3. Open a terminal in VS Code (View → Terminal).
-        4. If needed, activate the venv:
+        2. Use File → Open Folder… and open the folder that contains:
+               {EXPECTED_FOLDER_NAME}
+        3. Then open the folder:
+               {EXPECTED_FOLDER_NAME}
+        4. Open a terminal in VS Code (View → Terminal).
+        5. If needed, activate the venv:
                source venv/bin/activate
-        5. Run your Flask app:
+        6. Run your Flask app:
                python app.py
 
     If you get errors like 'ModuleNotFoundError: No module named flask', run:
