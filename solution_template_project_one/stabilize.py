@@ -1,316 +1,123 @@
 #!/usr/bin/env python3
 """
-stabilize_env.py
-
-Run this from inside the project folder:
-
-    .../solution_template_project_one/
-
-It will:
-- Confirm you are in the correct folder.
-- Ensure a virtual environment exists in ./venv (create it if missing).
-- Install dependencies (requirements.txt if present, otherwise Flask).
-- Verify Flask can be imported from the venv.
-- Configure VS Code (.vscode/settings.json) to use the venv interpreter.
-
-Usage (in the terminal):
-    python3 stabilize_env.py
+Stabilize Flask environment for solution_template_project_one
 """
 
-import os
-import sys
-import subprocess
-import shutil
-import json
+import os, sys, subprocess, shutil, json
 from textwrap import dedent
 
-# We only care that the current folder is this:
-EXPECTED_FOLDER_NAME = "solution_template_project_one"
-
-# Files that must exist in the project
-PROJECT_MARKERS = ["app.py"]
-
+EXPECTED_FOLDER = "solution_template_project_one"
 VENV_DIR = "venv"
 REQUIREMENTS_FILE = "requirements.txt"
+PROJECT_MARKERS = ["app.py"]
 
 
-# ---------------------------------------------------------------------------
-# Utility functions
-# ---------------------------------------------------------------------------
+# ------------ Helpers -------------
 
-def print_header(title: str) -> None:
-    print("\n" + "=" * 70)
-    print(title)
-    print("=" * 70)
-
-
-def fail(msg: str) -> None:
+def fail(msg):
     print(f"\n[ERROR] {msg}")
-    print("Fix the issue, then run: python3 stabilize_env.py again.")
     sys.exit(1)
 
 
 def run(cmd):
-    """
-    Run a shell command and return its stdout text.
-    On failure, print output and exit with a clear error.
-    """
-    print(f"\n> {' '.join(cmd)}")
-    result = subprocess.run(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True
-    )
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     if result.returncode != 0:
         print(result.stdout)
         fail(f"Command failed: {' '.join(cmd)}")
-    print(result.stdout.strip())
     return result.stdout.strip()
 
 
-def is_running_in_vscode() -> bool:
-    """
-    Heuristic: detect if this script is run from VS Code's integrated terminal.
-    """
-    term_program = os.environ.get("TERM_PROGRAM", "").lower()
-    if term_program == "vscode":
-        return True
-    if "VSCODE_PID" in os.environ:
-        return True
-    if "VSCODE_INJECTOR" in os.environ:
-        return True
-    return False
+# ------------ Checks -------------
+
+def check_folder():
+    if os.path.basename(os.path.normpath(os.getcwd())) != EXPECTED_FOLDER:
+        fail(f"Run inside folder: {EXPECTED_FOLDER}")
 
 
-# ---------------------------------------------------------------------------
-# Directory and project checks
-# ---------------------------------------------------------------------------
-
-def enforce_correct_directory() -> None:
-    """
-    Ensure this script is being run from a folder named:
-        solution_template_project_one
-    """
-    print_header("Checking current working directory")
-
-    cwd = os.getcwd()
-    normalized = os.path.normpath(cwd)
-    folder_name = os.path.basename(normalized)
-
-    if folder_name != EXPECTED_FOLDER_NAME:
-        print("You are NOT in the correct folder.\n")
-        print(f"This script MUST be run from a folder named:")
-        print(f"  {EXPECTED_FOLDER_NAME}\n")
-        print("Your current folder is:")
-        print(f"  {cwd}\n")
-
-        if is_running_in_vscode():
-            print("It looks like you are using VS Code.")
-            print("In VS Code, do this:")
-            print("  1. File → Open Folder…")
-            print("  2. Choose the folder that contains:")
-            print("         solution_template_project_one")
-            print("  3. Then open: solution_template_project_one")
-            print("  4. Open a terminal (View → Terminal).")
-            print("  5. Run: python3 stabilize_env.py\n")
-        else:
-            print("In your terminal, you should run something like:")
-            print("  cd path/to/solution_template_project_one\n")
-
-        fail("You are in the wrong directory.")
-    else:
-        print(f"Good: You are in the '{EXPECTED_FOLDER_NAME}' project directory.")
-
-
-def check_project_files() -> None:
-    """
-    Ensure required files exist (e.g., app.py)
-    """
+def check_files():
     missing = [f for f in PROJECT_MARKERS if not os.path.exists(f)]
     if missing:
-        print_header("Checking required project files")
-        print("Missing required files:")
-        for f in missing:
-            print(f"  - {f}")
-        fail("You are in the right folder name, but the project files are missing.")
-    print("\nProject files found. Good.")
+        fail(f"Missing required files: {', '.join(missing)}")
 
 
-# ---------------------------------------------------------------------------
-# Python / venv helpers
-# ---------------------------------------------------------------------------
-
-def find_system_python() -> str:
-    """
-    Find a suitable system Python (python3 preferred).
-    """
-    for name in ("python3", "python"):
-        path = shutil.which(name)
-        if path:
-            return path
-    fail("Could not find python3 or python on this system.")
+def find_python():
+    for p in ("python3", "python"):
+        q = shutil.which(p)
+        if q: return q
+    fail("python3 not found")
 
 
-def get_venv_python() -> str:
-    """
-    Get the Python interpreter inside the venv (supports macOS/Linux and Windows).
-    """
-    # macOS / Linux
-    candidate = os.path.join(VENV_DIR, "bin", "python")
-    if os.path.exists(candidate):
-        return candidate
+# ------------ VENV -------------
 
-    # Windows
-    candidate = os.path.join(VENV_DIR, "Scripts", "python.exe")
-    if os.path.exists(candidate):
-        return candidate
-
-    fail("Could not find the venv Python interpreter. Something is wrong with the venv.")
-
-
-def ensure_venv_exists(system_python: str) -> None:
-    """
-    Create ./venv if it does not exist.
-    """
-    print_header("Checking virtual environment (venv)")
-    if os.path.isdir(VENV_DIR):
-        print(f"Virtual environment '{VENV_DIR}' already exists. Good.")
+def make_venv(system_python):
+    if os.path.isdir(VENV_DIR): 
+        print("✓ venv exists")
         return
-
-    print("Virtual environment not found. Creating it now...")
+    print("• Creating venv...")
     run([system_python, "-m", "venv", VENV_DIR])
-    print(f"Created virtual environment in ./{VENV_DIR}")
+    print("✓ venv created")
 
 
-def install_dependencies(venv_python: str) -> None:
-    """
-    Upgrade pip and install packages into the venv.
-    - If requirements.txt exists, install from there.
-    - Otherwise, ensure Flask is installed.
-    """
-    print_header("Installing / checking dependencies")
+def venv_python():
+    for path in (os.path.join(VENV_DIR, "bin", "python"),
+                 os.path.join(VENV_DIR, "Scripts", "python.exe")):
+        if os.path.exists(path): return path
+    fail("venv python missing")
 
-    print("Upgrading pip in the virtual environment...")
-    run([venv_python, "-m", "pip", "install", "--upgrade", "pip"])
 
+def install_deps(vpy):
+    print("• Checking dependencies...")
+    run([vpy, "-m", "pip", "install", "--upgrade", "pip"])
     if os.path.exists(REQUIREMENTS_FILE):
-        print(f"Found {REQUIREMENTS_FILE}. Installing required packages...")
-        run([venv_python, "-m", "pip", "install", "-r", REQUIREMENTS_FILE])
+        run([vpy, "-m", "pip", "install", "-r", REQUIREMENTS_FILE])
     else:
-        print(f"No {REQUIREMENTS_FILE} found. Ensuring Flask is installed...")
-        code = "import importlib; print(importlib.util.find_spec('flask') is not None)"
-        result = run([venv_python, "-c", code])
-        if result.strip() == "True":
-            print("Flask is already installed in this venv. Good.")
-        else:
-            print("Flask not found in venv. Installing flask...")
-            run([venv_python, "-m", "pip", "install", "flask"])
+        code = "import importlib; print(importlib.util.find_spec('flask')!=None)"
+        if run([vpy, "-c", code]) != "True":
+            run([vpy, "-m", "pip", "install", "flask"])
+    print("✓ Dependencies OK")
 
 
-def verify_flask(venv_python: str) -> None:
-    """
-    Verify that Flask can be imported and show its version.
-    """
-    print_header("Verifying Flask in the venv")
-    code = "import flask; print(flask.__version__)"
-    version = run([venv_python, "-c", code])
-    print(f"Flask import succeeded. Version: {version}")
+def verify_flask(vpy):
+    version = run([vpy, "-c", "import flask; print(flask.__version__)"])
+    print(f"✓ Flask {version}")
 
 
-# ---------------------------------------------------------------------------
-# VS Code configuration
-# ---------------------------------------------------------------------------
+# ------------ VS CODE -------------
 
-def configure_vscode_settings(venv_python: str) -> None:
-    """
-    Create or update .vscode/settings.json so VS Code uses the venv Python.
-
-    Sets:
-        "python.defaultInterpreterPath": "<venv_python>"
-        "python.terminal.activateEnvironment": true
-    """
-    print_header("Configuring VS Code (Python interpreter)")
-
-    project_root = os.getcwd()
-    vscode_dir = os.path.join(project_root, ".vscode")
+def set_vscode(vpy):
+    vscode_dir = os.path.join(os.getcwd(), ".vscode")
     os.makedirs(vscode_dir, exist_ok=True)
-
     settings_path = os.path.join(vscode_dir, "settings.json")
-    settings = {}
-
-    if os.path.exists(settings_path):
-        try:
-            with open(settings_path, "r", encoding="utf-8") as f:
-                settings = json.load(f)
-            print(f"Loaded existing VS Code settings from {settings_path}")
-        except Exception:
-            print("Existing settings.json is invalid JSON. Overwriting it with fresh settings.")
-            settings = {}
-
-    # Update settings
-    settings["python.defaultInterpreterPath"] = venv_python
+    try:
+        settings = json.load(open(settings_path)) if os.path.exists(settings_path) else {}
+    except Exception:
+        settings = {}
+    settings["python.defaultInterpreterPath"] = vpy
     settings["python.terminal.activateEnvironment"] = True
-
-    with open(settings_path, "w", encoding="utf-8") as f:
-        json.dump(settings, f, indent=4)
-
-    print(f"Updated VS Code settings at: {settings_path}")
-    print("VS Code should now automatically use the venv interpreter for this folder.")
+    with open(settings_path, "w") as f: json.dump(settings, f, indent=2)
+    print("✓ VS Code linked to venv")
 
 
-# ---------------------------------------------------------------------------
-# Final instructions
-# ---------------------------------------------------------------------------
-
-def print_final_instructions() -> None:
-    print_header("Environment Ready")
-
-    instructions = dedent(f"""
-    Your Python / Flask environment for this project is set up correctly.
-
-    From now on, when you start work:
-
-        1. Open VS Code.
-        2. Use File → Open Folder… and open the folder that contains:
-               {EXPECTED_FOLDER_NAME}
-        3. Then open the folder:
-               {EXPECTED_FOLDER_NAME}
-        4. Open a terminal in VS Code (View → Terminal).
-        5. If needed, activate the venv:
-               source venv/bin/activate
-        6. Run your Flask app:
-               python app.py
-
-    If you get errors like 'ModuleNotFoundError: No module named flask', run:
-        python3 stabilize_env.py
-
-    VS Code has been configured to use the virtual environment's Python interpreter
-    for this folder (.vscode/settings.json).
-    """).strip("\n")
-
-    print(instructions)
-
-
-# ---------------------------------------------------------------------------
-# Main entry point
-# ---------------------------------------------------------------------------
+# ------------ Main -------------
 
 def main():
-    enforce_correct_directory()
-    check_project_files()
+    check_folder()
+    check_files()
+    py = find_python()
+    make_venv(py)
+    vpy = venv_python()
+    install_deps(vpy)
+    verify_flask(vpy)
+    set_vscode(vpy)
 
-    system_python = find_system_python()
-    print(f"\nUsing system Python: {system_python}")
+    print("\n=== Ready ===")
+    print(dedent(f"""
+      To start:
+        source venv/bin/activate
+        python app.py
 
-    ensure_venv_exists(system_python)
-    venv_python = get_venv_python()
-    print(f"\nVirtual environment Python: {venv_python}")
-
-    install_dependencies(venv_python)
-    verify_flask(venv_python)
-    configure_vscode_settings(venv_python)
-    print_final_instructions()
+      If anything breaks:  python3 stabilize_env.py
+    """).strip())
 
 
 if __name__ == "__main__":
