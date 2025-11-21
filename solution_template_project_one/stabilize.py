@@ -43,14 +43,15 @@ def check_files():
 def find_python():
     for p in ("python3", "python"):
         q = shutil.which(p)
-        if q: return q
+        if q:
+            return q
     fail("python3 not found")
 
 
 # ------------ VENV -------------
 
 def make_venv(system_python):
-    if os.path.isdir(VENV_DIR): 
+    if os.path.isdir(VENV_DIR):
         print("✓ venv exists")
         return
     print("• Creating venv...")
@@ -59,9 +60,12 @@ def make_venv(system_python):
 
 
 def venv_python():
-    for path in (os.path.join(VENV_DIR, "bin", "python"),
-                 os.path.join(VENV_DIR, "Scripts", "python.exe")):
-        if os.path.exists(path): return path
+    for path in (
+        os.path.join(VENV_DIR, "bin", "python"),
+        os.path.join(VENV_DIR, "Scripts", "python.exe")
+    ):
+        if os.path.exists(path):
+            return path
     fail("venv python missing")
 
 
@@ -78,7 +82,8 @@ def install_deps(vpy):
 
 
 def verify_flask(vpy):
-    version = run([vpy, "-c", "import flask; print(flask.__version__)"])
+    code = "import importlib.metadata as m; print(m.version('flask'))"
+    version = run([vpy, "-c", code])
     print(f"✓ Flask {version}")
 
 
@@ -94,7 +99,8 @@ def set_vscode(vpy):
         settings = {}
     settings["python.defaultInterpreterPath"] = vpy
     settings["python.terminal.activateEnvironment"] = True
-    with open(settings_path, "w") as f: json.dump(settings, f, indent=2)
+    with open(settings_path, "w") as f:
+        json.dump(settings, f, indent=2)
     print("✓ VS Code linked to venv")
 
 
@@ -111,12 +117,13 @@ def main():
     set_vscode(vpy)
 
     print("\n=== Ready ===")
-    print(dedent(f"""
+    print(dedent("""
       To start:
         source venv/bin/activate
         python app.py
 
-      If anything breaks:  python3 stabilize_env.py
+      If anything breaks:
+        python3 stabilize_env.py
     """).strip())
 
 
