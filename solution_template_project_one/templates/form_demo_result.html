@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="text-2xl font-bold mb-4">Form Demo: Server Response</h1>
+
+  <p class="mb-4">
+    The server received the following data from your form.
+    These values came from <code>request.form</code> in <code>app.py</code>.
+  </p>
+
+  <div class="mb-4">
+    <h2 class="font-semibold mb-1">Title (from text input):</h2>
+    <!-- title_from_form is passed in from app.py -->
+    <p class="border rounded p-2 bg-gray-50">
+      {{ title_from_form }}
+    </p>
+  </div>
+
+  <div class="mb-4">
+    <h2 class="font-semibold mb-1">Message (from textarea):</h2>
+    <!-- whitespace-pre-line preserves line breaks in the textarea -->
+    <pre class="border rounded p-2 bg-gray-50 whitespace-pre-line">
+{{ message_from_form }}
+    </pre>
+  </div>
+
+  <a href="{{ url_for('form_demo') }}" class="underline">
+    Go back to the form
+  </a>
+{% endblock %}

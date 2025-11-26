@@ -132,6 +132,10 @@ def login_required(view_func):
         return view_func(*args, **kwargs)
     return wrapped
 
+# We can start routes here the first route is the "root" or "index" route - what people see when they 
+# first visit our website (127.0.0.1:5000). You can think of each route as a path to a specific
+# part of your project (a page).
+
 @app.route('/')
 def index():
     user = current_user()
@@ -145,6 +149,58 @@ def index():
               (SELECT COUNT(*) FROM tags) AS tag_count
         ''', (user['id'],)).fetchone()
     return render_template('index.html', user=user, counts=counts)
+
+# this route shows us a simple form:
+
+
+# ==========================================================
+# SIMPLE FORM DEMO
+# ----------------------------------------------------------
+# Goal: show students how data moves:
+#   HTML form  →  HTTP request  →  Flask route  →  template
+# ==========================================================
+
+@app.route("/form_demo", methods=["GET"])
+def form_demo():
+    """
+    Show a simple form with:
+      - one <input type="text">
+      - one <textarea>
+    This route ONLY displays the form.
+    """
+    return render_template("form_demo.html")
+
+# ...and this route will show us the results of what a user typed in a form:
+
+@app.route("/form_demo/result", methods=["POST"])
+def form_demo_result():
+    """
+    Handle the submitted form.
+    - Read data from request.form (the POST body).
+    - Pass that data into a template so students can SEE
+      exactly what the server received.
+    """
+
+    # request.form is like a dictionary:
+    # the keys come from the "name" attributes in the HTML form.
+    title_from_form = request.form.get("title", "").strip()
+    message_from_form = request.form.get("message", "").strip()
+
+    # Now we pass these Python variables into the template
+    # as named parameters. Inside the template, they will be
+    # available as {{ title_from_form }} and {{ message_from_form }}.
+    return render_template(
+        "form_demo_result.html",
+        title_from_form=title_from_form,
+        message_from_form=message_from_form,
+    )
+
+
+
+
+
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
