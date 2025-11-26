@@ -150,17 +150,21 @@ def index():
         ''', (user['id'],)).fetchone()
     return render_template('index.html', user=user, counts=counts)
 
-# this route shows us a simple form:
 
 
 # ==========================================================
-# SIMPLE FORM DEMO
+# this route shows us a simple form:
 # ----------------------------------------------------------
 # Goal: show students how data moves:
 #   HTML form  →  HTTP request  →  Flask route  →  template
 # ==========================================================
 
 @app.route("/form_demo", methods=["GET"])
+
+# methods=["GET"] tells Flask that this route only responds to HTTP GET requests.
+# A GET request is used when the client wants to --> retrieve <--  a page or data.
+# By restricting the route to GET, Flask will ignore POST, PUT, DELETE, etc.
+
 def form_demo():
     """
     Show a simple form with:
@@ -173,6 +177,11 @@ def form_demo():
 # ...and this route will show us the results of what a user typed in a form:
 
 @app.route("/form_demo/result", methods=["POST"])
+
+# methods=["POST"] tells Flask that this route only accepts HTTP POST requests.
+# A POST request is used when the client --> submits <--  data to the server
+# (for example, sending form data). Flask will ignore GET, PUT, DELETE, etc.
+
 def form_demo_result():
     """
     Handle the submitted form.
@@ -197,11 +206,7 @@ def form_demo_result():
 
 
 
-
-
-
-
-
+# register route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
