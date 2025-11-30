@@ -24,6 +24,18 @@
     </pre>
   </div>
 
+  <div class="mb-4">
+    <h2 class="font-semibold mb-1">Category (from dropdown/select):</h2>
+    <!-- 
+      This shows the value that was selected from the dropdown.
+      It comes from the "value" attribute of the chosen <option>
+      category_from_form is passed in from app.py
+    -->
+    <p class="border rounded p-2 bg-gray-50">
+      {{ category_from_form }}
+    </p>
+  </div>
+
   <a href="{{ url_for('form_demo') }}" class="underline">
     Go back to the form
   </a>

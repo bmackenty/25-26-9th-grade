@@ -194,14 +194,20 @@ def form_demo_result():
     # the keys come from the "name" attributes in the HTML form.
     title_from_form = request.form.get("title", "").strip()
     message_from_form = request.form.get("message", "").strip()
+    
+    # Get the dropdown/select value
+    # The value will be whatever was in the "value" attribute
+    # of the <option> the user selected
+    category_from_form = request.form.get("category", "").strip()
 
     # Now we pass these Python variables into the template
     # as named parameters. Inside the template, they will be
-    # available as {{ title_from_form }} and {{ message_from_form }}.
+    # available as {{ title_from_form }}, {{ message_from_form }}, and {{ category_from_form }}.
     return render_template(
         "form_demo_result.html",
         title_from_form=title_from_form,
         message_from_form=message_from_form,
+        category_from_form=category_from_form,
     )
 
 

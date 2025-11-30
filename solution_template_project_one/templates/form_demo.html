@@ -46,6 +46,37 @@
       ></textarea>
     </div>
 
+    <!-- Dropdown/Select (choose from preset options) -->
+    <div>
+      <label for="category" class="block font-semibold mb-1">Category (dropdown/select)</label>
+      <!-- 
+        A <select> element creates a dropdown list
+        name="category" → request.form["category"] in app.py
+        The <option> elements are the choices users can pick from
+        value="..." is what gets sent to the server when that option is selected
+      -->
+      <select
+        id="category"
+        name="category"
+        class="border rounded w-full p-2"
+        required
+      >
+        <!-- 
+          The first option with empty value forces users to make a choice
+          disabled prevents selection, selected makes it the default
+        -->
+        <option value="" disabled selected>Choose a category...</option>
+        
+        <!-- Each option represents one choice in the dropdown -->
+        <option value="work">Work Related</option>
+        <option value="personal">Personal</option>
+        <option value="school">School Project</option>
+        <option value="hobby">Hobby/Interest</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <!-- end of select code -->
+
     <!-- Submit button -->
     <button
       type="submit"
