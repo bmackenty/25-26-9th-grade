@@ -24,13 +24,14 @@ DROP TABLE IF EXISTS users;
 --   username      → must be unique, required
 --   password_hash → the password, but encrypted (hashed)
 --   created_at    → when the account was created (auto-filled)
+--   status        → user account status: 'active' or 'inactive'
 -- ---------------------------------------------------------------
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status TEXT NOT NULL
+    status TEXT CHECK(status IN ('active','inactive')) DEFAULT 'active' NOT NULL
 );
 
 -- ---------------------------------------------------------------

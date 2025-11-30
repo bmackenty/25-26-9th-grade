@@ -4,7 +4,10 @@
 {% block content %}
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-xl font-semibold">Your Items</h1>
-  <a href="{{ url_for('items_create') }}" class="px-3 py-2 bg-blue-600 text-white rounded">+ New Item</a>
+  <!-- Only show 'New Item' button to admin users -->
+  {% if is_admin %}
+    <a href="{{ url_for('items_create') }}" class="px-3 py-2 bg-blue-600 text-white rounded">+ New Item</a>
+  {% endif %}
 </div>
 
 <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
@@ -36,15 +39,22 @@
           {% endif %}
         </div>
         <div class="flex items-center gap-2">
-          <a href="{{ url_for('items_edit', item_id=i.id) }}" class="px-2 py-1 border rounded">Edit</a>
-          <form method="post" action="{{ url_for('items_delete', item_id=i.id) }}" onsubmit="return confirm('Delete this item?');">
-            <button class="px-2 py-1 border rounded text-red-600">Delete</button>
-          </form>
+          <!-- Only show Edit and Delete buttons to admin users -->
+          {% if is_admin %}
+            <a href="{{ url_for('items_edit', item_id=i.id) }}" class="px-2 py-1 border rounded">Edit</a>
+            <form method="post" action="{{ url_for('items_delete', item_id=i.id) }}" onsubmit="return confirm('Delete this item?');">
+              <button class="px-2 py-1 border rounded text-red-600">Delete</button>
+            </form>
+          {% endif %}
         </div>
       </div>
     </div>
   {% else %}
-    <p>No items yet. <a class="underline" href="{{ url_for('items_create') }}">Create one</a>.</p>
+    {% if is_admin %}
+      <p>No items yet. <a class="underline" href="{{ url_for('items_create') }}">Create one</a>.</p>
+    {% else %}
+      <p>No items available.</p>
+    {% endif %}
   {% endfor %}
 </div>
 {% endblock %}

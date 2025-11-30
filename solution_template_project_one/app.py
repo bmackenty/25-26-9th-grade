@@ -46,6 +46,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-change-me')
 
+# List of usernames who can edit/create/delete items
+# Add or remove usernames here to control access
+ADMIN_USERS = ['teacher', 'admin', 'instructor', 'aa']
+
 # Absolute paths so Flask can’t “lose” the folder when run from different CWDs
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_DIR = os.path.join(BASE_DIR, 'db')
@@ -129,6 +133,28 @@ def login_required(view_func):
         if not current_user():
             flash('Please log in first.', 'warning')
             return redirect(url_for('login', next=request.path))
+        return view_func(*args, **kwargs)
+    return wrapped
+
+def admin_required(view_func):
+    """
+    Decorator that restricts access to specific named users only.
+    Only users in the ADMIN_USERS list can access the decorated function.
+    """
+    from functools import wraps
+    
+    @wraps(view_func)
+    def wrapped(*args, **kwargs):
+        user = current_user()
+        if not user:
+            flash('Please log in first.', 'warning')
+            return redirect(url_for('login', next=request.path))
+        
+        # Check if current user is in the admin list
+        if user['username'] not in ADMIN_USERS:
+            flash('Access denied. Only authorized users can perform this action.', 'error')
+            return redirect(url_for('items_list'))  # Redirect to items list instead of error page
+        
         return view_func(*args, **kwargs)
     return wrapped
 
@@ -230,7 +256,8 @@ def register():
             return render_template('auth/register.html')
 
         pw_hash = generate_password_hash(password)
-        db.execute('INSERT INTO users (username, password_hash) VALUES (?, ?)', (username, pw_hash))
+        # Include status field - new users start as 'active'
+        db.execute('INSERT INTO users (username, password_hash, status) VALUES (?, ?, ?)', (username, pw_hash, 'active'))
         db.commit()
         flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('login'))
@@ -265,6 +292,9 @@ def logout():
 def items_list():
     user = current_user()
     db = get_db()
+    
+    # Check if current user is an admin
+    is_admin = user['username'] in ADMIN_USERS
 
     q = request.args.get('q', '').strip()
     category_id = request.args.get('category_id')
@@ -297,10 +327,11 @@ def items_list():
     items = db.execute(SQL, tuple(params)).fetchall()
     categories = db.execute('SELECT * FROM categories ORDER BY name').fetchall()
     tags = db.execute('SELECT * FROM tags ORDER BY name').fetchall()
-    return render_template('items/list.html', items=items, categories=categories, tags=tags, q=q, category_id=category_id, tag_id=tag_id)
+    return render_template('items/list.html', items=items, categories=categories, tags=tags, q=q, category_id=category_id, tag_id=tag_id, is_admin=is_admin)
 
 @app.route('/items/create', methods=['GET', 'POST'])
 @login_required
+@admin_required  # Only admin users can create items
 def items_create():
     user = current_user()
     db = get_db()
@@ -336,6 +367,7 @@ def items_create():
 
 @app.route('/items/<int:item_id>/edit', methods=['GET', 'POST'])
 @login_required
+@admin_required  # Only admin users can edit items
 def items_edit(item_id):
     user = current_user()
     db = get_db()
@@ -380,6 +412,7 @@ def items_edit(item_id):
 
 @app.route('/items/<int:item_id>/delete', methods=['POST'])
 @login_required
+@admin_required  # Only admin users can delete items
 def items_delete(item_id):
     user = current_user()
     db = get_db()
