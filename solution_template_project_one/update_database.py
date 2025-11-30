@@ -263,7 +263,7 @@ def show_summary(backup_path):
         print("   (Your old data is safe!)")
     
     print("\n🚀 Your Flask app is ready to use the new schema!")
-    print("   You can now run: python app.py")
+    print("   You can now run: python3 app.py")
 
 
 def main():
