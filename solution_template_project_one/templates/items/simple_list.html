@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}All Items (Simple List){% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl font-bold mb-4">All Items (Simple)</h1>
+
+  <p class="mb-4 text-sm text-gray-600">
+    This page is intentionally simple so you can see how data
+    moves from the database into a template.
+  </p>
+
+  {% if items|length == 0 %}
+    <p>No items found.</p>
+  {% else %}
+    <ul class="list-disc pl-6 space-y-1">
+      {% for item in items %}
+        <li>
+          ID: {{ item.id }} — Name: {{ item.name }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

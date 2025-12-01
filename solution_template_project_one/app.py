@@ -329,6 +329,18 @@ def items_list():
     tags = db.execute('SELECT * FROM tags ORDER BY name').fetchall()
     return render_template('items/list.html', items=items, categories=categories, tags=tags, q=q, category_id=category_id, tag_id=tag_id, is_admin=is_admin)
 
+
+@app.route('/items_simple')
+def items_simple():
+    """Very simple route that lists all items with no filters.
+
+    This is meant for students to clearly see the flow:
+    route -> query database -> pass rows to template -> loop and show.
+    """
+    db = get_db()
+    rows = db.execute('SELECT * FROM items ORDER BY id').fetchall()
+    return render_template('items/simple_list.html', items=rows)
+
 @app.route('/items/create', methods=['GET', 'POST'])
 @login_required
 @admin_required  # Only admin users can create items
